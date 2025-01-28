@@ -5,7 +5,7 @@ import './App.css'
 
 function App() {
   const [count, setCount] = useState(0)
-
+  console.log('hi')g
   return (
     <>
       <div>
@@ -30,6 +30,7 @@ function App() {
       </p>
     </>
   )
+
 }
 
 export default App
