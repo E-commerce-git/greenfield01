@@ -3,13 +3,13 @@ const express = require('express');
 const orderProductRouter = require("../routes/orderProducts.js")
 
 const PORT = 3000;
-const helmet = require('helmet')
+// const helmet = require('helmet')
 const app = express();
-const sequelize = require('./config/database')
+// const sequelize = require('./config/database')
 const cors=require("cors")
-const authRoutes = require('./routes/authRoutes');
+// const authRoutes = require('./routes/authRoutes');
 require('dotenv').config()
-app.use(helmet())
+// app.use(helmet())
 
 const database=require("../database/connection")
 
