@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
-const User = require('../database/model/user');
+const {User} = require('../database/connection');
 
 
 const JWT_SECRET = process.env.JWT_SECRET // get the secret key from achraf

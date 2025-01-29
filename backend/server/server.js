@@ -3,13 +3,13 @@ const express = require('express');
 const orderProductRouter = require("../routes/orderProducts.js")
 
 const PORT = 3000;
-const helmet = require('helmet')
+// const helmet = require('helmet')
 const app = express();
-const sequelize = require('./config/database')
+// const sequelize = require('./config/database')
 const cors=require("cors")
-const authRoutes = require('./routes/authRoutes');
-require('dotenv').config()
-app.use(helmet())
+const authRoutes = require('../routes/authRoutes.js');
+// require('dotenv').config()
+// app.use(helmet())
 
 const database=require("../database/connection")
 
@@ -18,6 +18,8 @@ app.use(cors())
 // server configuration
 
 app.use("/api/",orderProductRouter)
+
+app.use("api/user/",authRoutes)
 
 // make the server listen to requests
 app.listen(PORT, () => {
