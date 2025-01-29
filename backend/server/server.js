@@ -12,12 +12,14 @@ require('dotenv').config()
 // app.use(helmet())
 
 const database=require("../database/connection")
+const userroutes=require("../routes/user.js")
 
 app.use(express.json());
 app.use(cors())
 // server configuration
 
 app.use("/api/",orderProductRouter)
+app.use("/api/user/",userroutes)
 
 // make the server listen to requests
 app.listen(PORT, () => {
