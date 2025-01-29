@@ -23,7 +23,7 @@ const LoginForm = () => {
     
     try {
       dispatch(loginStart());
-      const response = await api.post('/user/login/', formData);
+      const response = await aaxios.post('http://localhost:3000/api/user/register', formData);
       
       const { token, user } = response.data;
       localStorage.setItem('token', token);

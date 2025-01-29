@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { 
   registerStart, 
@@ -14,7 +15,7 @@ const RegisterForm = () => {
     email: '',
     password: '',
     confirmPassword: '',
-    role: 'user' // default role
+    role: 'user' 
   });
 
   const dispatch = useDispatch();
@@ -22,7 +23,7 @@ const RegisterForm = () => {
   const { loading, error, registerSuccess } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    // Clear registration status when component unmounts
+    
     return () => {
       dispatch(clearRegisterStatus());
     };
@@ -30,7 +31,7 @@ const RegisterForm = () => {
 
   useEffect(() => {
     if (registerSuccess) {
-      // Redirect to login page after successful registration
+   
       navigate('/login');
     }
   }, [registerSuccess, navigate]);
@@ -45,7 +46,6 @@ const RegisterForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Basic validation
     if (formData.password !== formData.confirmPassword) {
       dispatch(registerFailure('Passwords do not match'));
       return;
@@ -54,24 +54,15 @@ const RegisterForm = () => {
     try {
       dispatch(registerStart());
 
-      // Remove confirmPassword before sending to API
+     
       const { confirmPassword, ...registerData } = formData;
-
-      const response = await fetch('http://localhost:3000/api/user/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(registerData)
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Registration failed');
-      }
+      console.log(formData , "datta")
+      const response = await axios.post('http://localhost:3000/api/user/register' ,formData)
+       
 
       dispatch(registerSuccess());
+
+  
     } catch (err) {
       dispatch(registerFailure(err.message));
     }
