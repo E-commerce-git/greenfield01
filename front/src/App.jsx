@@ -2,13 +2,16 @@ import React from 'react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ProductList from './components/ProductList';
+import Carousel from './components/carousel.jsx';  // Import the Carousel component
 
 function App() {
   return (
     <>
       <Navbar />
       <main className="flex-grow">
-        {/* Your main content goes here */}
+        {/* Include the Carousel here */}
+        <Carousel />
+        {/* ProductList or other components */}
         <ProductList />
       </main>
       <Footer />
