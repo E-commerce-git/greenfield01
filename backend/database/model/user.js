@@ -23,7 +23,7 @@ module.exports = (connection, DataTypes) => {
             defaultValue: 'user',
             allowNull: false,
         },
-    }, {timestamps: true},
+    }, { tableName: "Users", timestamps: true } ,
       
    
     )

@@ -1,13 +1,3 @@
- // amdin user // Admin ===> name 
-/// oreder // Panier  // Review
-
-
-// Admin 
-// Product
-// Category
-// 
-
-
 const { Sequelize,DataTypes } = require('sequelize');
 
 const config = require('./config')

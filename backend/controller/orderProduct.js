@@ -1,5 +1,5 @@
-const db = require("../database/connection.js");
-const orderProduct = db.OrderProduct;
+// const db = require("../database/connection.js");
+// const orderProduct = db.OrderProduct;
 
 //--------------------Helper Functions--------------------
 const verifyData = (productId, quantity, OrderId) => {
