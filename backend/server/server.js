@@ -14,6 +14,7 @@ require('dotenv').config()
 const database=require("../database/connection")
 const userroutes=require("../routes/user.js")
 const productRoutes=require("../routes/product.js")
+const categoryRoutes = require("../routes/category");
 
 
 app.use(express.json());
@@ -23,6 +24,7 @@ app.use(cors())
 app.use("/api/",orderProductRouter)
 app.use("/api/user/",userroutes)
 app.use("/api/product/",productRoutes)
+app.use("/api/category/", categoryRoutes);
 
 
 // make the server listen to requests
