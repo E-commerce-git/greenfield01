@@ -39,12 +39,14 @@ db.User=require("./model/user")(connection, DataTypes)
 db.Product=require("./model/product")(connection, DataTypes)
 db.Order=require("./model/order")(connection, DataTypes)
 db.Category=require("./model/category")(connection, DataTypes)
+db.Payment=require("./model/payment.js")(connection, DataTypes)
 db.OrderProduct = require("./model/order_product")(connection, DataTypes)
 
 db.Category.hasMany(db.Product);
 db.Product.belongsTo(db.Category);
 
-
+db.Order.hasOne(db.Payment, { foreignKey: 'orderId', onDelete: 'CASCADE' });
+db.Payment.belongsTo(db.Order, { foreignKey: 'orderId' });
 db.User.hasMany(db.Order);
 db.Order.belongsTo(db.User);
 
