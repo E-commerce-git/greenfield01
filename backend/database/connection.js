@@ -40,7 +40,8 @@ db.Payment.belongsTo(db.Order, { foreignKey: 'orderId' });
 db.User.hasMany(db.Order);
 db.Order.belongsTo(db.User);
 
-
+db.User.hasMany(db.Product)
+db.Product.belongsTo(db.User)
 
 db.Order.belongsToMany(db.Product,{ through: db.OrderProduct })
 db.Product.belongsToMany(db.Order,{ through: db.OrderProduct })
