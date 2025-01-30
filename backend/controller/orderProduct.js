@@ -30,6 +30,11 @@ const getOne = async (OrderId, productId) => {
 // };
 
 
+const insertIntoOrderProduct = async (req, res) => {
+  const { productId, quantity, OrderId } = req.body;
+  verifyData(productId, quantity, OrderId);
+}
+
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
 const updateCart = async (req, res) => {
   const { productId, quantity, OrderId } = req.body;
