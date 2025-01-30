@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginStart, loginSuccess, loginFailure } from '../../store/slices/authSlice';
-import api from '../../services/api';
+
+import axios from 'axios';
 
 const LoginForm = () => {
   const [formData, setFormData] = useState({
     email: '',
-    password: ''
+    password: '',
+    role: 'user'
   });
+
   const dispatch = useDispatch();
   const { loading, error } = useSelector((state) => state.auth);
 
@@ -23,11 +26,12 @@ const LoginForm = () => {
     
     try {
       dispatch(loginStart());
-      const response = await aaxios.post('http://localhost:3000/api/user/register', formData);
-      
+      const response = await axios.post('http://localhost:3000/api/user/login', formData);
+      console.log(response , "response")
       const { token, user } = response.data;
+      console.log(token , "token")
       localStorage.setItem('token', token);
-      
+      localStorage.setItem('userRole', user.role)
       dispatch(loginSuccess({ token, user }));
     } catch (err) {
       dispatch(loginFailure(err.response?.data?.message || 'Login failed'));
@@ -70,6 +74,19 @@ const LoginForm = () => {
                 onChange={handleChange}
               />
             </div>
+            <div>
+              <label htmlFor="role" className="sr-only">Select Role</label>
+              <select
+                id="role"
+                name="role"
+                value={formData.role}
+                onChange={handleChange}
+                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+              >
+                <option value="user">User</option>
+                <option value="seller">Seller</option>
+              </select>
+            </div>
           </div>
 
           {error && (
@@ -84,7 +101,7 @@ const LoginForm = () => {
               disabled={loading}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
-              {loading ? 'Signing in...' : 'Sign in'}
+              {loading ? 'Signing in...' : `Sign in as ${formData.role}`}
             </button>
           </div>
         </form>

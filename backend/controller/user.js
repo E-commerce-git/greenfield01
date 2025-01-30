@@ -7,27 +7,45 @@ module.exports = {
     const { userName, email, password, role } = req.body;
 
     try {
-      
+      // Validate role
+ 
+
+      // Check if user already exists
       const existingUser = await User.findOne({ where: { email } });
       if (existingUser) {
         return res.status(400).json({ message: "Email already exists" });
       }
 
- 
+      // Hash password
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
 
-     
+      // Create user with specified role
       const user = await User.create({
         userName,
         email,
         password: hashedPassword,
-        role,
+        role // Include role in user creation
       });
 
+      // Generate JWT token
+      const token = jwt.sign(
+        { id: user.id, email: user.email, role: user.role },
+        process.env.JWT_SECRET,
+        { expiresIn: process.env.JWT_EXPIRATION }
+      );
 
-
-      res.status(201).json({ message: "User created successfully", user });
+      // Return success with token and user data
+      res.status(201).json({ 
+        message: "User created successfully", 
+        token,
+        user: {
+          id: user.id,
+          userName: user.userName,
+          email: user.email,
+          role: user.role
+        }
+      });
     } catch (error) {
       console.error("Error registering user:", error);
       res.status(500).json({ message: "Server error" });
