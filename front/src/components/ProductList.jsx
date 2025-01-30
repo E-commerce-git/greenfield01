@@ -1,5 +1,9 @@
-import React from 'react';
-import products from '../products.json';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import Carousel from './carousel';
+import CategoryCarousel from './CategoryCarousel';
+import CountdownTimer from './CountdownTimer';
+import ProductCard from './ProductCard';
 
 export default function ProductList() {
   const { categoryId } = useParams();
