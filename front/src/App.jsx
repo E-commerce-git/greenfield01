@@ -1,28 +1,23 @@
+// src/App.jsx
 import React from 'react';
 import Footer from './components/Footer';
-import ProductList from './components/ProductList';
-import Navbar from './components/NavBar.jsx';
-import { Provider } from 'react-redux';
-import { store } from './store/store.js';
-import LoginForm from './features/auth/LoginForm';
-import RegisterForm from './features/auth/RegisterForm.jsx';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import About from './components/About';
+import ProductList from './components/ProductList';
+import Footer from './components/Footer';
 
 function App() {
   return (
-    <Provider store={store}>
-      <BrowserRouter>
-        <Navbar />
-        <Routes>
-          <Route path="/store" element={<ProductList />} />
-          <Route path="/login" element={<LoginForm />} />
-          <Route path="/register" element={<RegisterForm />} />
-        </Routes>
-        <Footer />
-      </BrowserRouter>
-    </Provider>
+    <BrowserRouter>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<ProductList />} />
+        <Route path="/about" element={<About />} />
+      </Routes>
+      <Footer />
+    </BrowserRouter>
   );
 }
 
 export default App;
-
