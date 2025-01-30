@@ -15,6 +15,7 @@ export default function Navbar() {
             <Link to="/about" className="text-gray-800 hover:text-blue-600 transition duration-200">About</Link>
             <Link to="#" className="text-gray-800 hover:text-blue-600 transition duration-200">Shop</Link>
             <Link to="#" className="text-gray-800 hover:text-blue-600 transition duration-200">Contact</Link>
+            <Link to="/signup" className="text-gray-800 hover:text-blue-600 transition duration-200">Sign Up</Link>
           </div>
 
           {/* Search Bar */}

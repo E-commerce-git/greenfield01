@@ -1,61 +1,37 @@
 import React from 'react';
 
-const ProductCard = ({ product }) => {
+export default function ProductCard({ product }) {
   return (
     <div className="relative bg-white p-3 rounded-lg">
       {/* Discount Badge */}
-      <div className="absolute top-3 left-3 bg-red-500 text-white text-sm px-2 py-0.5 rounded">
-        -{product.discount}%
-      </div>
+      {product.discount && (
+        <div className="absolute top-3 left-3 bg-[#DB4444] text-white text-sm px-2 py-1 rounded">
+          -{product.discount}%
+        </div>
+      )}
       
-      {/* Wishlist Button */}
-      <button className="absolute top-3 right-3 p-1">
-        <svg 
-          className="w-6 h-6 text-gray-400 hover:text-red-500" 
-          fill="none" 
-          stroke="currentColor" 
-          viewBox="0 0 24 24"
-        >
-          <path 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-            strokeWidth="2" 
-            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-          />
-        </svg>
-      </button>
-
-      {/* Quick View Button */}
-      <button className="absolute top-12 right-3 p-1">
-        <svg 
-          className="w-6 h-6 text-gray-400 hover:text-black" 
-          fill="none" 
-          stroke="currentColor" 
-          viewBox="0 0 24 24"
-        >
-          <path 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-            strokeWidth="2" 
-            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-          />
-          <path 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-            strokeWidth="2" 
-            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-          />
-        </svg>
-      </button>
+      {/* Action Buttons */}
+      <div className="absolute top-3 right-3 flex flex-col gap-2">
+        <button className="p-2 bg-white rounded-full shadow hover:bg-gray-100">
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
+              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+          </svg>
+        </button>
+        <button className="p-2 bg-white rounded-full shadow hover:bg-gray-100">
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
+              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
+        </button>
+      </div>
 
       {/* Product Image */}
-      <div className="mb-4">
-        <img 
-          src={product.image} 
-          alt={product.name}
-          className="w-full h-48 object-contain"
-        />
-      </div>
+      <img 
+        src={product.imageUrl} 
+        alt={product.name} 
+        className="w-full h-48 object-contain mb-4"
+      />
 
       {/* Add to Cart Button */}
       <button className="w-full bg-black text-white py-2 rounded hover:bg-gray-800 transition-colors mb-3">
@@ -64,9 +40,15 @@ const ProductCard = ({ product }) => {
 
       {/* Product Details */}
       <h3 className="font-medium text-base mb-2">{product.name}</h3>
-      <div className="flex items-center gap-2 mb-2">
-        <span className="text-red-500 font-medium">${product.salePrice}</span>
-        <span className="text-gray-400 line-through">${product.originalPrice}</span>
+      <div className="flex items-center gap-3 mb-2">
+        <span className="text-[#DB4444] text-base font-medium">
+          ${product.price}
+        </span>
+        {product.discount && (
+          <span className="text-gray-500 line-through text-base">
+            ${(product.price * (1 + product.discount/100)).toFixed(2)}
+          </span>
+        )}
       </div>
 
       {/* Rating */}
@@ -75,9 +57,7 @@ const ProductCard = ({ product }) => {
           {[...Array(5)].map((_, index) => (
             <svg
               key={index}
-              className={`w-4 h-4 ${
-                index < product.rating ? 'text-yellow-400' : 'text-gray-300'
-              }`}
+              className={`w-4 h-4 ${index < (product.rating || 0) ? 'text-[#FFAD33]' : 'text-gray-300'}`}
               fill="currentColor"
               viewBox="0 0 20 20"
             >
@@ -85,10 +65,18 @@ const ProductCard = ({ product }) => {
             </svg>
           ))}
         </div>
-        <span className="text-gray-500 text-sm">({product.reviewCount})</span>
+        <span className="text-gray-500 text-sm">({product.reviews || 0})</span>
+      </div>
+
+      {/* Additional Details */}
+      {product.size && (
+        <div className="mt-2 text-sm text-gray-500">
+          Size: {product.size}
+        </div>
+      )}
+      <div className="mt-2 text-sm text-gray-500">
+        Stock: {product.stock}
       </div>
     </div>
   );
-};
-
-export default ProductCard;
+}

@@ -46,7 +46,7 @@ db.Product.belongsTo(db.User)
 db.Order.belongsToMany(db.Product,{ through: db.OrderProduct })
 db.Product.belongsToMany(db.Order,{ through: db.OrderProduct })
 
-connection.sync({force : true})
+// connection.sync({force : true})
 
 
 module.exports=db
