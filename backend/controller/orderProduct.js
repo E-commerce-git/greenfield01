@@ -25,57 +25,11 @@ const getOne = async (OrderId, productId) => {
 };
 //--------------------------------------------------------
 
-const addToCart = async (req, res) => {
-  let { productId, quantity, OrderId } = req.body;
-  quantity = quantity || 1;
+// const addTo = async (req, res) => {
 
-//--------------Start the transaction----------------------
-const t = await connection.transaction(); 
-//---------------------------------------------------------
-  try {
-    verifyData(productId, quantity, OrderId);
-    const product = await db.Product.findByPk(productId);
-//--------------prevent non existing products--------------
-    if (!product) {
-      return res.status(404).json({ error: "Product not found" });
-    }
-//--------------looking for the cart-----------------------
-    const cart = await getOne(OrderId, productId);
-    
-//--------------if there is no cart create it---------------
-    if (!cart) {
-      const newCartItem = await orderProduct.create({
-        OrderId: OrderId,
-        ProductId: productId,
-        quantity: quantity,
-      },{ transaction: t });
+// };
 
-      await handleTotal(productId,quantity,OrderId,0,t)
-      await t.commit();
-      return res
-        .status(201)
-        .json({ message: "added to cart successfully", data: newCartItem }); //if it dont exist we create it
-    } else {
-//--------------update it if it exist by adding one---------
-      let newCartQuantity = cart.quantity + quantity;
-      await orderProduct.update(
-        { quantity: newCartQuantity },
-        { where: { OrderId: OrderId, productId: productId } },{ transaction: t }
-      );
-      await handleTotal(productId,newCartQuantity,OrderId,cart.quantity,t)
 
-      const updatedQuantity = await getOne(OrderId, productId);
-      await t.commit();
-      return res
-      .status(200)
-      .json({ message: "added to cart successfully", data: updatedQuantity });
-    }
-} catch (err) {
-    console.error("Error adding to cart:", err);
-    await t.rollback();
-    return res.status(500).json({ error: "Failed to add to cart" });
-  }
-};
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
 const updateCart = async (req, res) => {
   const { productId, quantity, OrderId } = req.body;

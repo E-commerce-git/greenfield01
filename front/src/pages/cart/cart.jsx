@@ -1,26 +1,18 @@
+// src/pages/Cart.jsx
 import React from 'react';
-import CartItems from "./cartItems"
-import axios from 'axios'
-import { useState ,useEffect} from 'react';
-const Cart = () => {
-  const [products, setProducts] = useState([])
-  // const [Total,setTotal]=useState(0)
+import CartItems from './CartItems';
+import { useCart } from './CartContext';
 
-  const getAllProducts = async() =>{
-    try{const result = await axios.get("http://localhost:3000/api/product/products")
-      setProducts(result.data)
-      console.log(products)
-    }catch(err){console.error(err,"error Fetching products data from server")}
-  }// array of all products 
-  useEffect(()=>{
-    getAllProducts()
-  },[])
+const Cart = () => {
+  const { cartItems, total } = useCart();
+
   return (
     <div className="container mx-auto p-4">
       <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
         <table className="w-full mb-4">
           <thead>
             <tr>
+              <th className="text-left py-2"></th>
               <th className="text-left py-2">Product</th>
               <th className="text-left py-2">Price</th>
               <th className="text-left py-2">Quantity</th>
@@ -28,7 +20,16 @@ const Cart = () => {
             </tr>
           </thead>
           <tbody>
-            <CartItems/>
+            {cartItems.map((item, index) => (
+              <CartItems
+                key={index}
+                name={item.name}
+                quantity={item.quantity}
+                price={item.price}
+                imageUrl={item.imageUrl}
+                initialQuantity={item.quantity}
+              />
+            ))}
           </tbody>
         </table>
 
@@ -46,7 +47,7 @@ const Cart = () => {
         <div className="bg-gray-100 p-4 rounded">
           <div className="flex justify-between mb-2">
             <span>Subtotal:</span>
-            <span>$0</span>
+            <span>${total.toFixed(2)}</span>
           </div>
           <div className="flex justify-between mb-2">
             <span>Shipping:</span>
@@ -54,7 +55,7 @@ const Cart = () => {
           </div>
           <div className="flex justify-between font-bold">
             <span>Total:</span>
-            <span>$0</span>
+            <span>${total.toFixed(2)}</span>
           </div>
         </div>
 
