@@ -1,46 +1,171 @@
-import React from 'react';
-import products from '../products.json';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import Carousel from './carousel';
+import CategoryCarousel from './CategoryCarousel';
+import CountdownTimer from './CountdownTimer';
+import ProductCard from './ProductCard';
 
 export default function ProductList() {
+  const { categoryId } = useParams();
+  const navigate = useNavigate();
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+
+  useEffect(() => {
+    fetchCategories();
+    if (categoryId) {
+      setSelectedCategory(categoryId);
+      fetchProductsByCategory(categoryId);
+    } else {
+      fetchProducts();
+    }
+  }, [categoryId]);
+
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/api/category/categories');
+      if (!response.ok) throw new Error('Failed to fetch categories');
+      const data = await response.json();
+      setCategories(data.categories);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('http://localhost:3000/api/product/products');
+      if (!response.ok) throw new Error('Failed to fetch products');
+      const data = await response.json();
+      setProducts(data.products);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchProductsByCategory = async (categoryId) => {
+    try {
+      setLoading(true);
+      const response = await fetch(`http://localhost:3000/api/category/${categoryId}/products`);
+      if (!response.ok) throw new Error('Failed to fetch products');
+      const data = await response.json();
+      setProducts(data.products);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCategoryClick = (categoryId) => {
+    navigate(`/category/${categoryId}`);
+  };
+
+  if (loading) return <div className="flex justify-center items-center h-screen">Loading...</div>;
+  if (error) return <div className="flex justify-center items-center h-screen text-red-500">Error: {error}</div>;
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {products.map((product) => (
-          <div key={product.id} className="bg-white rounded-lg shadow-md overflow-hidden">
-            {/* Product Image */}
-            <div className="relative">
-              <img
-                src={product.image || "https://via.placeholder.com/300"} // Fallback image if no image is provided
-                alt={product.name}
-                className="w-full h-48 object-cover"
-              />
-              {/* Add to Cart Button */}
-              <button className="absolute bottom-2 right-2 bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition duration-200">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                </svg>
-              </button>
-            </div>
-
-            {/* Product Details */}
-            <div className="p-4">
-              <h2 className="text-lg font-semibold text-gray-800">{product.name}</h2>
-              <p className="text-sm text-gray-600 mt-2">{product.description}</p>
-              <div className="flex items-center justify-between mt-4">
-                <p className="text-lg font-bold text-gray-900">${product.price}</p>
-                {/* Rating (if available) */}
-                <div className="flex items-center">
-                  <svg className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-                  </svg>
-                  <span className="text-sm text-gray-600 ml-1">4.5</span>
-                </div>
+      {/* Main Layout */}
+      <div className="flex flex-col gap-8">
+        {/* Carousel Section */}
+        {!categoryId ? (
+          <div className="flex gap-4">
+            {/* Categories Sidebar */}
+            <div className="w-[217px]">
+              <h2 className="text-xl font-semibold mb-4">Categories</h2>
+              <div className="bg-white border border-gray-200 rounded">
+                {categories.map(category => (
+                  <div
+                    key={category.id}
+                    onClick={() => handleCategoryClick(category.id)}
+                    className={`flex justify-between items-center px-4 py-2.5 border-b border-gray-100 hover:bg-gray-50 cursor-pointer ${
+                      selectedCategory === category.id ? 'bg-gray-100' : ''
+                    }`}
+                  >
+                    <span className="text-sm text-gray-600">{category.name}</span>
+                    <span className="text-gray-400">›</span>
+                  </div>
+                ))}
               </div>
             </div>
+            
+            {/* Main Carousel */}
+            <div className="flex-1">
+              <Carousel />
+            </div>
           </div>
-        ))}
+        ) : (
+          <CategoryCarousel categoryId={categoryId} />
+        )}
+
+        {/* Products Section */}
+        <div className="mt-8">
+          {/* Flash Sales Header */}
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <div className="text-[#DB4444] text-base">Today's</div>
+              <h2 className="text-2xl font-bold">Flash Sales</h2>
+            </div>
+            
+            <div className="flex items-center gap-4">
+              <CountdownTimer />
+            </div>
+          </div>
+
+          {/* Products Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {products.map(product => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+
+          {/* View All Products Button */}
+          <div className="text-center mt-8">
+            <button className="bg-[#DB4444] text-white px-8 py-2 rounded hover:bg-red-600 transition-colors">
+              View All Products
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
 }
+
+// Helper function to get category icons
+const getCategoryIcon = (categoryName) => {
+  const icons = {
+    'Phones': (
+      <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+        <path d="M38.9375 6.125H17.0625C15.5523 6.125 14.3125 7.36484 14.3125 8.875V47.125C14.3125 48.6352 15.5523 49.875 17.0625 49.875H38.9375C40.4477 49.875 41.6875 48.6352 41.6875 47.125V8.875C41.6875 7.36484 40.4477 6.125 38.9375 6.125Z" 
+          stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    ),
+    'Computers': (
+      <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+        <path d="M46.6667 9.33334H9.33333C8.04467 9.33334 7 10.378 7 11.6667V35C7 36.2887 8.04467 37.3333 9.33333 37.3333H46.6667C47.9553 37.3333 49 36.2887 49 35V11.6667C49 10.378 47.9553 9.33334 46.6667 9.33334Z" 
+          stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    ),
+    'SmartWatch': (
+      <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+        <path d="M35 14H21C17.134 14 14 17.134 14 21V35C14 38.866 17.134 42 21 42H35C38.866 42 42 38.866 42 35V21C42 17.134 38.866 14 35 14Z" 
+          stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    ),
+    // Add other category icons following the same pattern...
+  };
+
+  return icons[categoryName] || (
+    // Default icon if category doesn't match
+    <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+      <rect x="8" y="8" width="40" height="40" rx="20" stroke="black" strokeWidth="2"/>
+    </svg>
+  );
+};
