@@ -80,7 +80,8 @@ module.exports = {
       await User.update({userName,email,password,role},{
         where : {id}
       })
-      res.status(200).send("updated")
+      res.status(200).json({ message: "User updated successfully", updatedUser: { id, userName, email, role } });
+
     } catch (error) {
       console.error("user updated", error);
       res.status(500).json({ message: "Server error" });
