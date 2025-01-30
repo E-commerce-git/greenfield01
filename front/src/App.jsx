@@ -1,19 +1,25 @@
-import React from 'react';
+
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Navbar from './components/Navbar';
-import Footer from './components/Footer';
+import About from './components/About';
 import ProductList from './components/ProductList';
-import Panier from './components/Panier';
+import Footer from './components/Footer';
+import Cart from './pages/cart/cart';
+import ContactUs from "./pages/ContactUS"
+
 function App() {
   return (
-    <>
+    <BrowserRouter>
       <Navbar />
-      <main className="flex-grow">
-        {/* Your main content goes here */}
-        <ProductList />
-      </main>
+      <Routes>
+        <Route path="/" element={<ProductList />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/Cart"element={<Cart/>} />
+        <Route path="/Cart"element={<Cart/>} />
+        <Route path="/ContactUs"element={<ContactUs/>} />
+      </Routes>
       <Footer />
-      <Panier/>
-    </>
+    </BrowserRouter>
   );
 }
 
