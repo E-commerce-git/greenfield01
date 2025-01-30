@@ -1,21 +1,21 @@
+// src/App.jsx
 import React from 'react';
-import Navbar from './components/NavBar.jsx';  // Import the Navbar component
-import Footer from './components/Footer';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import About from './components/About';
 import ProductList from './components/ProductList';
-import Carousel from './components/carousel.jsx';  // Import the Carousel component
+import Footer from './components/Footer';
 
 function App() {
   return (
-    <>
+    <BrowserRouter>
       <Navbar />
-      <main className="flex-grow">
-        {/* Include the Carousel here */}
-        <Carousel />
-        {/* ProductList or other components */}
-        <ProductList />
-      </main>
+      <Routes>
+        <Route path="/" element={<ProductList />} />
+        <Route path="/about" element={<About />} />
+      </Routes>
       <Footer />
-    </>
+    </BrowserRouter>
   );
 }
 
