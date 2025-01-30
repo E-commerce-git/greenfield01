@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export default function Footer() {
   return (
@@ -7,27 +7,42 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* About Section */}
           <div>
-            <h3 className="text-lg font-bold mb-4">About Us</h3>
-            <p className="text-sm text-gray-400">
-              We are a company dedicated to providing the best products and services to our customers.
-            </p>
+            <h3 className="text-lg font-bold mb-4">Exclusive</h3>
+            <p className="text-sm text-gray-400">Subscribe Get 10%</p>
+            <p className="text-sm text-gray-400">off your first order</p>
           </div>
 
           {/* Quick Links */}
           <div>
             <h3 className="text-lg font-bold mb-4">Quick Links</h3>
-            <ul className="text-sm text-gray-400">
-              <li><a href="#" className="hover:text-blue-600 transition duration-200">Home</a></li>
-              <li><a href="#" className="hover:text-blue-600 transition duration-200">About</a></li>
-              <li><a href="#" className="hover:text-blue-600 transition duration-200">Contact</a></li>
-              <li><a href="#" className="hover:text-blue-600 transition duration-200">Privacy Policy</a></li>
+            <ul className="text-sm text-gray-400 space-y-2">
+              <li>
+                <a href="/" className="hover:text-blue-600 transition">
+                  Home
+                </a>
+              </li>
+              <li>
+                <a href="/about" className="hover:text-blue-600 transition">
+                  About
+                </a>
+              </li>
+              <li>
+                <a href="#" className="hover:text-blue-600 transition">
+                  Contact
+                </a>
+              </li>
+              <li>
+                <a href="#" className="hover:text-blue-600 transition">
+                  Privacy Policy
+                </a>
+              </li>
             </ul>
           </div>
 
           {/* Contact Info */}
           <div>
             <h3 className="text-lg font-bold mb-4">Contact Info</h3>
-            <ul className="text-sm text-gray-400">
+            <ul className="text-sm text-gray-400 space-y-2">
               <li>123 Main Street</li>
               <li>New York, NY 10001</li>
               <li>Phone: (123) 456-7890</li>
@@ -35,23 +50,89 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Social Media */}
+          {/* Download App Section */}
           <div>
-            <h3 className="text-lg font-bold mb-4">Follow Us</h3>
-            <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-blue-600 transition duration-200">
-                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"></path>
+            <h3 className="text-lg font-bold mb-4">Download App</h3>
+            <p className="text-sm text-gray-400 mb-4">
+              Save $3 with App New User Only
+            </p>
+            <div className="flex items-center space-x-4 mb-6">
+              {/* QR Code */}
+              <img
+                src="https://tse2.mm.bing.net/th?id=OIP.-9N4K3Syg-OgbET8dgDwqAHaHa&pid=Api&P=0&h=180"
+                alt="QR Code"
+                className="w-24 h-24"
+              />
+              {/* App Store Buttons */}
+              <div className="space-y-2">
+                <img
+                  src="https://tse3.mm.bing.net/th?id=OIP.a7hkwxpVOiMzChf87GmGdwHaCM&pid=Api&P=0&h=180"
+                  alt="Google Play"
+                  className="h-10"
+                />
+                <img
+                  src="https://tse2.mm.bing.net/th?id=OIP.1uekPFYzi2YM5d_bXG2_nQHaCj&pid=Api&P=0&h=180"
+                  alt="App Store"
+                  className="h-10"
+                />
+              </div>
+            </div>
+            {/* Social Media Icons */}
+            <div className="flex justify-center mt-4 space-x-6">
+              <a
+                href="#"
+                className="text-gray-400 hover:text-pink-500 transition"
+                aria-label="Instagram"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor"
+                  className="w-6 h-6"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M7.5 2h9A5.5 5.5 0 0122 7.5v9A5.5 5.5 0 0116.5 22h-9A5.5 5.5 0 012 16.5v-9A5.5 5.5 0 017.5 2zm9 2h-9A3.5 3.5 0 004 7.5v9A3.5 3.5 0 007.5 20h9A3.5 3.5 0 0020 16.5v-9A3.5 3.5 0 0016.5 4zM12 7a5 5 0 110 10A5 5 0 0112 7zm0 2a3 3 0 100 6 3 3 0 000-6zm4.5-3a1.5 1.5 0 110 3 1.5 1.5 0 010-3z" />
                 </svg>
               </a>
-              <a href="#" className="text-gray-400 hover:text-blue-600 transition duration-200">
-                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"></path>
+              <a
+                href="#"
+                className="text-gray-400 hover:text-blue-600 transition"
+                aria-label="Facebook"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor"
+                  className="w-6 h-6"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M22 12a10 10 0 10-11.64 9.89V15h-2.44v-3h2.44v-2.2c0-2.4 1.44-3.7 3.62-3.7 1.05 0 2.14.18 2.14.18v2.34h-1.2c-1.18 0-1.54.74-1.54 1.5V12h2.62l-.42 3h-2.2v6.89A10 10 0 0022 12z" />
                 </svg>
               </a>
-              <a href="#" className="text-gray-400 hover:text-blue-600 transition duration-200">
-                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M22.23 5.924c-.806.358-1.67.6-2.577.71a4.526 4.526 0 001.985-2.497 9.037 9.037 0 01-2.866 1.095 4.513 4.513 0 00-7.69 4.114 12.81 12.81 0 01-9.3-4.715 4.513 4.513 0 001.396 6.022 4.49 4.49 0 01-2.043-.564v.057a4.513 4.513 0 003.62 4.425 4.52 4.52 0 01-2.037.077 4.513 4.513 0 004.216 3.134 9.05 9.05 0 01-5.604 1.93c-.364 0-.724-.021-1.08-.063a12.773 12.773 0 006.92 2.03c8.3 0 12.84-6.876 12.84-12.84 0-.195-.005-.39-.014-.583a9.172 9.172 0 002.252-2.336z"></path>
+              <a
+                href="#"
+                className="text-gray-400 hover:text-blue-400 transition"
+                aria-label="Twitter"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor"
+                  className="w-6 h-6"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M22 5.5a7.55 7.55 0 01-2.17.6 3.82 3.82 0 001.67-2.1 7.55 7.55 0 01-2.41.92 3.78 3.78 0 00-6.48 3.44 10.72 10.72 0 01-7.79-3.95 3.78 3.78 0 001.16 5.06 3.72 3.72 0 01-1.71-.48v.05a3.78 3.78 0 003.03 3.7 3.7 3.7 0 01-1.7.07 3.79 3.79 0 003.53 2.63A7.59 7.59 0 012 17.53a10.72 10.72 0 005.79 1.69c7 0 10.83-5.8 10.83-10.83v-.49A7.5 7.5 0 0022 5.5z" />
+                </svg>
+              </a>
+              <a
+                href="#"
+                className="text-gray-400 hover:text-blue-700 transition"
+                aria-label="LinkedIn"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor"
+                  className="w-6 h-6"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M4.98 3.5a2.48 2.48 0 012.5 2.5 2.5 2.5 0 11-5 0 2.48 2.48 0 012.5-2.5zM2 21h5v-9H2v9zm7 0h5v-4.6c0-2.5 3-2.7 3 0V21h5v-7.6c0-6.8-7.5-6.6-7.5 0V21z" />
                 </svg>
               </a>
             </div>
