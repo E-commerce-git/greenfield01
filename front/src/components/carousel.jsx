@@ -1,49 +1,58 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 export default function Carousel() {
-  // Define your image array
+  // Image Array
   const images = [
-    'https://i.pinimg.com/originals/53/2f/ce/532fce4a815f90151781b7bc2bd09b98.jpg',
-    'https://i.pinimg.com/originals/16/d1/64/16d164cf392078acf23f46933de85a83.png',
+    'https://cdn.mos.cms.futurecdn.net/pY7Q5zV9vb6QovWr9WdaDj-1200-80.jpg',
     'https://via.placeholder.com/1200x400?text=Image+3',
     'https://via.placeholder.com/1200x400?text=Image+4',
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Next slide function
+  // Function to move to the next slide
   const nextSlide = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
   };
 
-  // Previous slide function
+  // Function to move to the previous slide
   const prevSlide = () => {
     setCurrentIndex((prevIndex) =>
       prevIndex === 0 ? images.length - 1 : prevIndex - 1
     );
   };
 
+  // Set up auto-slide every 3 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      nextSlide(); // Move to the next slide every 3 seconds
+    }, 3000); // 3000 milliseconds = 3 seconds
+
+    // Clean up interval when the component unmounts
+    return () => clearInterval(interval);
+  }, []); // Empty dependency array to run only once when the component mounts
+
   return (
-    <div className="relative max-w-7xl mx-auto">
+    <div className="relative max-w-full mx-auto overflow-hidden">
       {/* Carousel Images */}
-      <div className="overflow-hidden">
+      <div className="w-full transition-transform duration-500 ease-in-out">
         <img
           src={images[currentIndex]}
           alt={`Carousel image ${currentIndex + 1}`}
-          className="w-full h-96 object-cover rounded-lg"
+          className="w-full h-96 object-cover rounded-lg shadow-lg"
         />
       </div>
 
-      {/* Navigation Buttons */}
+      {/* Navigation Arrows */}
       <button
         onClick={prevSlide}
-        className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-black text-white p-2 rounded-full hover:bg-gray-700"
+        className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-black text-white p-3 rounded-full opacity-70 hover:opacity-100 transition-opacity duration-200"
       >
         &#8592;
       </button>
       <button
         onClick={nextSlide}
-        className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-black text-white p-2 rounded-full hover:bg-gray-700"
+        className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-black text-white p-3 rounded-full opacity-70 hover:opacity-100 transition-opacity duration-200"
       >
         &#8594;
       </button>
@@ -54,9 +63,7 @@ export default function Carousel() {
           <button
             key={index}
             onClick={() => setCurrentIndex(index)}
-            className={`w-3 h-3 rounded-full ${
-              currentIndex === index ? 'bg-blue-500' : 'bg-gray-500'
-            }`}
+            className={`w-3 h-3 rounded-full ${currentIndex === index ? 'bg-blue-500' : 'bg-gray-500'} transition-all duration-300`}
           />
         ))}
       </div>
