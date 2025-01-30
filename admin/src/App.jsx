@@ -1,11 +1,46 @@
-import '../styles/index.css';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Login from "../src/components/login";
+import Dashboard from "../src/components/Dashboard";
+import PrivateRoute from "../src/components/PrivateRoute";
+import UserProfile from "./components/UserProfile";
+import UserList from "./components/UserList"; // Import the new component
 
-function App() {
+const App = () => {
   return (
-    <div className="flex h-screen items-center justify-center bg-blue-500">
-      <h1 className="text-4xl font-bold text-white">Tailwind CSS is Working! 🚀</h1>
-    </div>
+    <Router>
+      <Routes>
+        {/* Public Route */}
+        <Route path="/login" element={<Login />} />
+
+        {/* Protected Routes */}
+        <Route
+          path="/dashboard"
+          element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/users/:id"
+          element={
+            <PrivateRoute>
+              <UserProfile />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/users"
+          element={
+            <PrivateRoute>
+              <UserList />
+            </PrivateRoute>
+          }
+        />
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;
