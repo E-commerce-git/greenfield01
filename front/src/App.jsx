@@ -2,7 +2,7 @@ import React from 'react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ProductList from './components/ProductList';
-
+import Panier from './components/Panier';
 function App() {
   return (
     <>
@@ -12,6 +12,7 @@ function App() {
         <ProductList />
       </main>
       <Footer />
+      <Panier/>
     </>
   );
 }
