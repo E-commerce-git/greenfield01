@@ -1,5 +1,5 @@
 import React from 'react';
-import Navbar from './components/Navbar';
+import Navbar from './components/NavBar.jsx';  // Import the Navbar component
 import Footer from './components/Footer';
 import ProductList from './components/ProductList';
 import Carousel from './components/carousel.jsx';  // Import the Carousel component
