@@ -4,20 +4,23 @@
     "name": "Product 1",
     "description": "Description for product 1",
     "price": 29.99,
-    "image": "https://via.placeholder.com/300"
+    "image": "https://th.bing.com/th/id/R.2bb795234ccf97e05430d16eee280d51?rik=BAE5MNkejTsQJA&pid=ImgRaw&r=0",
+    "discount": 20
   },
   {
     "id": 2,
     "name": "Product 2",
     "description": "Description for product 2",
     "price": 39.99,
-    "image": "https://via.placeholder.com/300"
+    "image": "https://via.placeholder.com/300",
+    "discount":30
   },
   {
     "id": 3,
     "name": "Product 3",
     "description": "Description for product 3",
     "price": 49.99,
-    "image": "https://via.placeholder.com/300"
+    "image": "https://via.placeholder.com/300",
+    "discount": 10
   }
 ]

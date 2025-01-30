@@ -5,7 +5,7 @@ import store from './store/store';
 import { CartProvider } from './pages/cart/CartContext';  // Import the CartProvider
 import Footer from './components/Footer';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import Navbar from './components/Navbar';
+import Navbar from './components/NavBar';
 import About from './components/About';
 import ProductList from './components/ProductList';
 import RegisterForm from './features/auth/RegisterForm';

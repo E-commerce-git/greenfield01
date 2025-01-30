@@ -8,7 +8,7 @@ const PORT = 3000;
 const app = express();
 // const sequelize = require('./config/database')
 const cors=require("cors")
-// const authRoutes = require('../routes/authRoutes.js');
+// const authRoutes = require('./routes/authRoutes');
 require('dotenv').config()
 // app.use(helmet())
 
@@ -24,8 +24,10 @@ app.use(cors())
 
 app.use("/api/orders",orderRouter)
 app.use("/api/",orderProductRouter)
-
 app.use("/api/user/",userroutes)
+app.use("/api/product/",productRoutes)
+app.use("/api/category/", categoryRoutes);
+
 
 // make the server listen to requests
 app.listen(PORT, () => {
