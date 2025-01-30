@@ -1,44 +1,55 @@
 import React, { useState, useEffect } from 'react';
 
-export default function Carousel() {
-  // Image Array
-  const images = [
-    'https://fastarz.com/wp-content/uploads/2023/09/Turkish-Zara.jpg',
-    'https://cdn.mos.cms.futurecdn.net/pY7Q5zV9vb6QovWr9WdaDj-1200-80.jpg',
-    'https://www.lecturas.com/medio/2022/09/07/zara_4860e6e2_1200x1449.jpg',
-  ];
-
+export default function CategoryCarousel({ categoryId }) {
+  const [images, setImages] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Function to move to the next slide
+  // Category-specific carousel images
+  const categoryImages = {
+    women: [
+      'https://example.com/women-fashion-1.jpg',
+      'https://example.com/women-fashion-2.jpg',
+      'https://example.com/women-fashion-3.jpg',
+    ],
+    men: [
+      'https://example.com/men-fashion-1.jpg',
+      'https://example.com/men-fashion-2.jpg',
+      'https://example.com/men-fashion-3.jpg',
+    ],
+    kids: [
+      'https://example.com/kids-fashion-1.jpg',
+      'https://example.com/kids-fashion-2.jpg',
+      'https://example.com/kids-fashion-3.jpg',
+    ],
+  };
+
+  useEffect(() => {
+    setImages(categoryImages[categoryId] || []);
+  }, [categoryId]);
+
   const nextSlide = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
   };
 
-  // Function to move to the previous slide
   const prevSlide = () => {
     setCurrentIndex((prevIndex) =>
       prevIndex === 0 ? images.length - 1 : prevIndex - 1
     );
   };
 
-  // Set up auto-slide every 3 seconds
   useEffect(() => {
-    const interval = setInterval(() => {
-      nextSlide(); // Move to the next slide every 3 seconds
-    }, 3000); // 3000 milliseconds = 3 seconds
-
-    // Clean up interval when the component unmounts
+    const interval = setInterval(nextSlide, 3000);
     return () => clearInterval(interval);
-  }, []); // Empty dependency array to run only once when the component mounts
+  }, [images.length]);
+
+  if (images.length === 0) return null;
 
   return (
     <div className="relative max-w-full mx-auto overflow-hidden">
-      {/* Carousel Images */}
       <div className="w-full transition-transform duration-500 ease-in-out">
         <img
           src={images[currentIndex]}
-          alt={`Carousel image ${currentIndex + 1}`}
+          alt={`${categoryId} fashion ${currentIndex + 1}`}
           className="w-full h-96 object-cover rounded-lg shadow-lg"
         />
       </div>
@@ -63,10 +74,12 @@ export default function Carousel() {
           <button
             key={index}
             onClick={() => setCurrentIndex(index)}
-            className={`w-3 h-3 rounded-full ${currentIndex === index ? 'bg-blue-500' : 'bg-gray-500'} transition-all duration-300`}
+            className={`w-3 h-3 rounded-full ${
+              currentIndex === index ? 'bg-blue-500' : 'bg-gray-500'
+            } transition-all duration-300`}
           />
         ))}
       </div>
     </div>
   );
-}
+} 
