@@ -58,6 +58,7 @@ export default function Navbar() {
             </button>
 
             {/* Profile Icon */}
+            <a href="/profile" className="text-gray-800 hover:text-blue-600 transition duration-200"/>
             <Link to="#" className="text-gray-800 hover:text-blue-600 transition duration-200" aria-label="Profile">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path
