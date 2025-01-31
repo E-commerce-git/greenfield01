@@ -1,7 +1,7 @@
 const { User } = require("../database/connection");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-
+console.log("proccess",process.env.JWT_SECRET)
 module.exports = {
   register: async (req, res) => {
 

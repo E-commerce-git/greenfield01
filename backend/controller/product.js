@@ -66,7 +66,7 @@ module.exports = {
             }
 
             // Check if the user is the owner of the product or an admin
-            if (product.UserId !== userId && req.user.role !== 'admin') {
+            if (product.UserId !== userId && req.user.role !== 'seller') {
                 return res.status(403).json({ message: "Unauthorized to delete this product" });
             }
 
@@ -91,7 +91,7 @@ module.exports = {
             }
 
             // Check if the user is the owner of the product or an admin
-            if (product.UserId !== userId && req.user.role !== 'admin') {
+            if (product.UserId !== userId && req.user.role !== 'seller') {
                 return res.status(403).json({ message: "Unauthorized to update this product" });
             }
 

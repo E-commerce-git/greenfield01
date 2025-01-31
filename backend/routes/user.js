@@ -8,6 +8,6 @@ Router.get('/',getAllUser)
 Router.get("/getUser", authenticateJWT, currentUser)
 Router.post("/register",register)
 Router.post("/login",login)
-Router.get('/:id', getUserById);
+Router.get('/user/:id', getUserById);
 Router.get('/check-auth', authenticateJWT, checkAuth);
-module.exports = Router
+module.exports = Router 
