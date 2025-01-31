@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { loginSuccess } from "../store/redux/authSlice";
 import { useNavigate } from "react-router-dom";
 
@@ -8,6 +8,13 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/dashboard");
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -21,6 +28,8 @@ const Login = () => {
       const data = await response.json();
 
       if (response.ok && data.user.role === "admin") {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
         dispatch(loginSuccess(data));
         navigate("/dashboard");
       } else {
@@ -30,10 +39,6 @@ const Login = () => {
       console.error("Login error:", error);
     }
   };
-
-  useEffect(()=>{
-    handleLogin()
-  },[])
 
   return (
     <div className="flex h-screen justify-center items-center bg-gray-100">
