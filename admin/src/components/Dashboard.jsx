@@ -1,15 +1,23 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import { logout } from "../store/redux/authSlice";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const handleLogout = () => {
+  const handleLogout = (e) => {
+    e.preventDefault();
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     dispatch(logout());
     navigate("/login");
+  };
+
+  const handleUsersClick = () => {
+    navigate('/users');
   };
 
   return (
@@ -31,14 +39,16 @@ const Dashboard = () => {
         <aside className="w-64 bg-gray-800 text-white p-4 shadow-lg">
           <h2 className="text-lg font-semibold mb-6">Menu</h2>
           <ul className="space-y-3">
-          <li>
-  <Link
-    to="/users" // Change the link to /users
-    className="flex items-center p-2 rounded-lg hover:bg-gray-700 transition duration-300"
-  >
-    <span className="ml-2">Users</span>
-  </Link>
-</li>
+            <li>
+              <button
+                onClick={handleUsersClick}
+                className={`flex items-center w-full p-2 rounded-lg hover:bg-gray-700 transition duration-300 ${
+                  location.pathname === '/users' ? 'bg-gray-700' : ''
+                }`}
+              >
+                <span className="ml-2">Users</span>
+              </button>
+            </li>
           </ul>
         </aside>
 
