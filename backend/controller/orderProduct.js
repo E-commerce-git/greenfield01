@@ -5,9 +5,7 @@ const {handleTotal} = require("./order.js")
 
 //--------------------Helper Functions--------------------
 const verifyData = (productId, quantity, OrderId) => {
-  if (!productId || !quantity || !OrderId) {
-    throw new Error("Invalid request body or params");
-  }
+
   if (isNaN(quantity) || quantity <= 0) {
     throw new Error("Invalid quantity");
   }
@@ -35,7 +33,7 @@ const insertIntoOrderProduct = async (req, res) => {
   verifyData(productId, quantity, OrderId);
   try{
     const addedProduct = await orderProduct.create({ProductId:   productId, quantity:quantity,OrderId: OrderId} )
-    return res.status(201).json({message:"product ordered successfully"})
+    return res.status(201).json({message:"product ordered successfully",data:addedProduct})
   }catch(err){
     console.error("Error inserting into orderProduct:", err);
     throw new Error("Failed inserting into orderProduct");
