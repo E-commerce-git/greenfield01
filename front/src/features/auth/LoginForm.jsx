@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux';
 import { loginStart, loginSuccess, loginFailure } from '../../store/slices/authSlice';
-import img from "../../assets/"
+
 import axios from 'axios';
 
 const LoginForm = () => {
@@ -13,6 +14,7 @@ const LoginForm = () => {
 
   const dispatch = useDispatch();
   const { loading, error } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({
@@ -33,6 +35,7 @@ const LoginForm = () => {
       localStorage.setItem('token', token);
       localStorage.setItem('userRole', user.role)
       dispatch(loginSuccess({ token, user }));
+      navigate('/');
     } catch (err) {
       dispatch(loginFailure(err.response?.data?.message || 'Login failed'));
     }
