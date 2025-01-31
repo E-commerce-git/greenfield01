@@ -101,5 +101,25 @@ module.exports = {
             console.error("Error updating product:", error);
             res.status(500).json({ message: "Server error" });
         }
-    }
+    },
+
+    // searchProducts: async (req, res) => {
+    //     try {
+    //         const { query } = req.query;
+            
+    //         const products = await Product.findAll({
+    //             where: {
+    //                 name: {
+    //                     [connection.Sequelize.Op.iLike]: `%${query}%`  // Case-insensitive search
+    //                 }
+    //             },
+    //             include: [{ model: User, attributes: ["userName", "email"] }, { model: Category }]
+    //         });
+            
+    //         res.json({ products });
+    //     } catch (error) {
+    //         console.error("Error searching products:", error);
+    //         res.status(500).json({ message: "Server error" });
+    //     }
+    // }
 };
