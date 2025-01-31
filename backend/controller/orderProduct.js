@@ -33,7 +33,7 @@ const insertIntoOrderProduct = async (req, res) => {
   verifyData(productId, quantity, OrderId);
   try{
     const addedProduct = await orderProduct.create({ProductId:   productId, quantity:quantity,OrderId: OrderId} )
-    return res.status(201).json({message:"product ordered successfully"})
+    return res.status(201).json({message:"product ordered successfully",data:addedProduct})
   }catch(err){
     console.error("Error inserting into orderProduct:", err);
     throw new Error("Failed inserting into orderProduct");

@@ -1,16 +1,15 @@
 import CartItems from './CartItems';
 import { useCart } from './CartContext';
 import createOrder from "../../functions/addOrder.jsx";
-import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
   const { cartItems, total } = useCart();
-  const user = useSelector((state) => state.auth.user);
   const navigate = useNavigate();  // Initialize useNavigate hook
 
   const handleCheckout = async () => {
     try {
+      const user =localStorage.getItem("userId");
       await createOrder(user, cartItems, total, navigate); // Pass navigate here
     } catch (err) {
       console.error("Error during checkout:", err);

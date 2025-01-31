@@ -28,7 +28,7 @@ export default function Navbar() {
   }, []);
 
   // Debug logs
-  console.log('Auth state:', { isAuthenticated, user, showUserInfo });
+  // console.log('Auth state:', { isAuthenticated, user, showUserInfo });
 
   const navigate = useNavigate();
 
