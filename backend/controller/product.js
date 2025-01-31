@@ -8,7 +8,7 @@ module.exports = {
             });
             res.json({ products });
         } catch (error) {
-            console.error("Error getting products:", error);
+            console.error("Error getting products:", error); 
             res.status(500).json({ message: "Server error" });
         }
     },

@@ -12,7 +12,7 @@ module.exports = {
         return res.status(400).json({ 
           message: "Invalid role. Must be either 'user' or 'seller'" 
         });
-      }
+      }  
 
       const existingUser = await User.findOne({ where: { email } });
       if (existingUser) {

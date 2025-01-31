@@ -49,6 +49,45 @@ const Dashboard = () => {
                 <span className="ml-2">Users</span>
               </button>
             </li>
+
+            <li>
+              <button
+                onClick={handleUsersClick}
+                className={`flex items-center w-full p-2 rounded-lg hover:bg-gray-700 transition duration-300 ${
+                  location.pathname === '/users' ? 'bg-gray-700' : ''
+                }`}
+              >
+                <span className="ml-2">Product</span>
+              </button>
+            </li>
+
+
+
+            <li>
+              <button
+                onClick={handleUsersClick}
+                className={`flex items-center w-full p-2 rounded-lg hover:bg-gray-700 transition duration-300 ${
+                  location.pathname === '/users' ? 'bg-gray-700' : ''
+                }`}
+              >
+                <span className="ml-2">Category</span>
+              </button>
+            </li>
+
+
+            <li>
+              <button
+                onClick={handleUsersClick}
+                className={`flex items-center w-full p-2 rounded-lg hover:bg-gray-700 transition duration-300 ${
+                  location.pathname === '/users' ? 'bg-gray-700' : ''
+                }`}
+              >
+                <span className="ml-2">Order</span>
+              </button>
+            </li>
+
+
+            
           </ul>
         </aside>
 
