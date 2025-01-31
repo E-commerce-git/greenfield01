@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const createOrder = async (userId, cartItems, total) => {
+const createOrder = async (userId, cartItems, total, navigate) => {
   try {
     const response = await axios.post(`http://localhost:3000/api/orders/create-order/${userId.id}`, { total: total });
     console.log("Order created successfully:", response.data);
@@ -9,23 +9,27 @@ const createOrder = async (userId, cartItems, total) => {
     console.log('Cart Items:', cartItems);
     
     // Iterating through each cart item
-    cartItems.forEach(async (el) => {
+    for (const el of cartItems) {
       // Check if 'quantity' exists on 'el'
       if (el.quantity === undefined) {
         console.error(`Missing quantity for product ${el.id}`);
-        return; // Skip this iteration if quantity is missing
+        continue; // Skip this iteration if quantity is missing
       }
       
       await axios.post("http://localhost:3000/api/insert-into-order-product", {
         productId: el.id,
-        quantity: el.quantity,  // Access quantity directly from 'el'
+        quantity: el.quantity,
         OrderId: response.data.order.OrderId
       });
       console.log("Product added to order:", el.id);
-    });
+    }
+
+    // Navigate to /Payment after order creation
+    navigate('/Payment'); // Should work as intended now
   } catch (err) {
     console.error("Error creating order:", err);
     throw new Error("Failed to create order");
   }
-}
-export default createOrder
+};
+
+export default createOrder;

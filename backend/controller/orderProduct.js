@@ -5,9 +5,7 @@ const {handleTotal} = require("./order.js")
 
 //--------------------Helper Functions--------------------
 const verifyData = (productId, quantity, OrderId) => {
-  if (!productId || !quantity || !OrderId) {
-    throw new Error("Invalid request body or params");
-  }
+
   if (isNaN(quantity) || quantity <= 0) {
     throw new Error("Invalid quantity");
   }
