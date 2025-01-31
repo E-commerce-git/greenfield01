@@ -1,6 +1,7 @@
 // import express (after npm install express)
 const express = require('express');
 const orderProductRouter = require("../routes/orderProducts.js")
+const orderRouter = require("../routes/orderRouter.js");
 
 const PORT = 3000;
 // const helmet = require('helmet')
@@ -21,6 +22,7 @@ app.use(express.json());
 app.use(cors())
 // server configuration
 
+app.use("/api/orders",orderRouter)
 app.use("/api/",orderProductRouter)
 app.use("/api/user/",userroutes)
 app.use("/api/product/",productRoutes)
