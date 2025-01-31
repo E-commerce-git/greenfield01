@@ -9,6 +9,7 @@ import About from './components/About';
 import ProductList from './components/ProductList';
 import RegisterForm from './features/auth/RegisterForm';
 import LoginForm from './features/auth/LoginForm';
+import Profile from './components/Profile';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="/register" element={<RegisterForm />} />
           <Route path="/login" element={<LoginForm />} />
           <Route path="/category/:categoryId" element={<ProductList />} />
+          <Route path="/profile" element={<Profile />} />
         </Routes>
         <Footer />
       </BrowserRouter>
