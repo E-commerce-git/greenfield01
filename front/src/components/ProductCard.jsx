@@ -1,6 +1,15 @@
+// src/components/ProductCard.js
 import React from 'react';
+import { addToCart } from "../functions/addToCard";
+import { useCart } from '../pages/cart/CartContext'; // Import useCart
 
 export default function ProductCard({ product }) {
+  const { updateCart } = useCart(); // Get updateCart from context
+
+  const handleAddToCart = () => {
+    addToCart(product, updateCart);
+  };
+
   return (
     <div className="relative bg-white p-3 rounded-lg">
       {/* Discount Badge */}
@@ -34,7 +43,10 @@ export default function ProductCard({ product }) {
       />
 
       {/* Add to Cart Button */}
-      <button className="w-full bg-black text-white py-2 rounded hover:bg-gray-800 transition-colors mb-3">
+      <button 
+        className="w-full bg-black text-white py-2 rounded hover:bg-gray-800 transition-colors mb-3" 
+        onClick={handleAddToCart}
+      >
         Add To Cart
       </button>
 
