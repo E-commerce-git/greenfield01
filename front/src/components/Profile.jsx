@@ -19,6 +19,7 @@ const Profile = ({}) => {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
         });
+        console.log(response.data , "response.data");
         setUser(response.data);
         setFormData({
           name: response.data.userName,
@@ -42,20 +43,46 @@ const Profile = ({}) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
     try {
-      const response = await axios.put('http://localhost:3000/api/user/current', formData, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
+      // Create update object with only filled fields
+      const updateData = {
+        userName: formData.name,
+        email: formData.email,
+      };
+
+      // Only include password fields if current password is provided
+      if (formData.currentPassword) {
+        if (formData.newPassword !== formData.confirmPassword) {
+          alert('New passwords do not match');
+          return;
+        }
+        updateData.currentPassword = formData.currentPassword;
+        updateData.newPassword = formData.newPassword;
+      }
+
+      const response = await axios.put(
+        'http://localhost:3000/api/user/current', 
+        updateData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        }
+      );
+
       setUser(response.data);
       setFormData({
-        name: response.data.userName,
-        email: response.data.email,
+        ...formData,
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: '',
       });
+      alert('Profile updated successfully!');
+      
     } catch (error) {
       console.error(error);
-      alert('Failed to update user data');
+      alert(error.response?.data?.message || 'Failed to update user data');
     }
   };
 

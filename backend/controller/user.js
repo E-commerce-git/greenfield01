@@ -106,20 +106,58 @@ module.exports = {
     }
   },
 
-  updateUser: async (req,res) => {
+  updateUser: async (req, res) => {
     try {
-      const { id } = req.params;
-      const {userName,email,password,role}=req.body
-      await User.update({userName,email,password,role},{
-        where : {id}
-      })
-      res.status(200).json({ message: "User updated successfully", updatedUser: { id, userName, email, role } });
+      // Get user ID from JWT token
+      const userId = req.user.id;
+      const { userName, email, currentPassword, newPassword } = req.body;
+
+      // Find the current user
+      const user = await User.findOne({ where: { id: userId } });
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Prepare update object
+      const updateData = {
+        userName: userName || user.userName,
+        email: email || user.email,
+      };
+
+      // If password change is requested
+      if (currentPassword && newPassword) {
+        // Verify current password
+        const isPasswordValid = await bcrypt.compare(currentPassword, user.password);
+        if (!isPasswordValid) {
+          return res.status(400).json({ message: "Current password is incorrect" });
+        }
+
+        // Hash new password
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(newPassword, salt);
+        updateData.password = hashedPassword;
+      }
+
+      // Update user
+      await User.update(updateData, {
+        where: { id: userId }
+      });
+
+      // Fetch updated user data
+      const updatedUser = await User.findOne({ 
+        where: { id: userId },
+        attributes: ['id', 'userName', 'email', 'role'] // Exclude password from response
+      });
+
+      res.status(200).json({ 
+        message: "Profile updated successfully", 
+        user: updatedUser 
+      });
 
     } catch (error) {
-      console.error("user updated", error);
+      console.error("Error updating user:", error);
       res.status(500).json({ message: "Server error" });
     }
-    
   },
 
   getAllUser : async (req,res) => {
@@ -159,6 +197,42 @@ module.exports = {
       res.status(500).json({ message: "Server error" });
     }
   },
-  
+
+  checkAuth: async (req, res) => {
+    try {
+      // Since authenticateJWT middleware adds user to req object
+      if (req.user) {
+        // Fetch fresh user data from database
+        const user = await User.findOne({ 
+          where: { id: req.user.id },
+          attributes: ['id', 'userName', 'email', 'role'] // Exclude sensitive data
+        });
+
+        if (!user) {
+          return res.status(401).json({
+            isAuthenticated: false,
+            user: null
+          });
+        }
+
+        return res.status(200).json({
+          isAuthenticated: true,
+          user: user
+        });
+      }
+
+      return res.status(401).json({
+        isAuthenticated: false,
+        user: null
+      });
+    } catch (error) {
+      console.error("Error checking auth:", error);
+      return res.status(500).json({
+        isAuthenticated: false,
+        user: null,
+        message: "Server error"
+      });
+    }
+  },
 };
 
