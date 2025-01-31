@@ -1,7 +1,6 @@
-// src/App.jsx
 import { Provider } from 'react-redux';
 import store from './store/store';
-import { CartProvider } from './pages/cart/CartContext';  // Import the CartProvider
+import { CartProvider } from './pages/cart/CartContext';
 import Footer from './components/Footer';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Navbar from './components/NavBar';
@@ -14,11 +13,12 @@ import NotFound from './pages/NotFound';
 import Payment from './pages/payment/payment';
 import Cart from './pages/cart/cart';
 import ContactUs from './pages/ContactUS';
+import SearchResults from './components/SearchResults'; // Import the new SearchResults component
 
 function App() {
   return (
     <Provider store={store}>
-      <CartProvider> {/* Wrap with CartProvider */}
+      <CartProvider>
         <BrowserRouter>
           <Navbar />
           <Routes>
@@ -32,10 +32,11 @@ function App() {
             <Route path="/category/:categoryId" element={<ProductList />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/Payment" element={<Payment />} />
+            <Route path="/search/:query" element={<SearchResults />} /> {/* Add this route */}
           </Routes>
           <Footer />
         </BrowserRouter>
-      </CartProvider> {/* Close CartProvider */}
+      </CartProvider>
     </Provider>
   );
 }

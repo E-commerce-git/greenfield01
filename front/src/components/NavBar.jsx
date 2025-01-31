@@ -1,7 +1,18 @@
+
+
 import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 
 export default function Navbar() {
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search/${searchQuery}`);
+    }
+  };
 
   return (
     <nav className="bg-white shadow-lg">
@@ -20,16 +31,18 @@ export default function Navbar() {
           </div>
 
           {/* Search Bar */}
-          <div className="flex items-center">
+          <form onSubmit={handleSearch} className="flex items-center">
             <input
               type="text"
               placeholder="Search products..."
               className="px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
-            <button className="px-4 py-2 bg-blue-600 text-white rounded-r-md hover:bg-blue-700 transition duration-200">
+            <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-r-md hover:bg-blue-700 transition duration-200">
               Search
             </button>
-          </div>
+          </form>
 
           {/* User Actions */}
           <div className="flex items-center space-x-4">
@@ -58,8 +71,7 @@ export default function Navbar() {
             </button>
 
             {/* Profile Icon */}
-            <a href="/profile" className="text-gray-800 hover:text-blue-600 transition duration-200"/>
-            <Link to="#" className="text-gray-800 hover:text-blue-600 transition duration-200" aria-label="Profile">
+            <Link to="/profile" className="text-gray-800 hover:text-blue-600 transition duration-200" aria-label="Profile">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path
                   strokeLinecap="round"
