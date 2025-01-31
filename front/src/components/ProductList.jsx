@@ -132,12 +132,63 @@ export default function ProductList() {
               View All Products
             </button>
           </div>
+
+          {/* New Arrival Section */}
+          <div className="mt-12">
+            <h2 className="text-2xl font-bold mb-6">New Arrival</h2>
+            <div className="flex flex-wrap gap-4">
+              <div className="flex-1 bg-black text-white p-6 rounded-lg relative">
+                <img src="https://cdn.galleries.smcloud.net/t/galleries/gf-4Axw-xWNu-6aCr_playstation-5-994x828.jpg" />
+                <div className="absolute bottom-4 left-4">
+                  <h3 className="text-xl font-bold">PlayStation 5</h3>
+                  <p className="text-sm">Black and White version of the PS5 coming out on sale.</p>
+                  <button className="mt-2 bg-white text-black px-4 py-2 rounded">Shop Now</button>
+                </div>
+              </div>
+              <div className="flex flex-col gap-4">
+                <div className="bg-gray-800 text-white p-6 rounded-lg">
+                  <h3 className="text-xl font-bold">Women's Collections</h3>
+                  <p className="text-sm">Featured woman collections that give you another vibe.</p>
+                  <button className="mt-2 bg-white text-black px-4 py-2 rounded">Shop Now</button>
+                </div>
+                <div className="bg-gray-800 text-white p-6 rounded-lg">
+                  <h3 className="text-xl font-bold">Speakers</h3>
+                  <p className="text-sm">Amazon wireless speakers.</p>
+                  <button className="mt-2 bg-white text-black px-4 py-2 rounded">Shop Now</button>
+                </div>
+                <div className="bg-gray-800 text-white p-6 rounded-lg">
+                  <h3 className="text-xl font-bold">Perfume</h3>
+                  <p className="text-sm">GUCCI INTENSE OUD EDP.</p>
+                  <button className="mt-2 bg-white text-black px-4 py-2 rounded">Shop Now</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Features Section */}
+          <div className="flex justify-around mt-8">
+            <div className="text-center">
+              {/* <img src="path/to/delivery-icon.svg" alt="Free and Fast Delivery" className="mx-auto mb-2" /> */}
+              <h4 className="font-bold">FREE AND FAST DELIVERY</h4>
+              <p className="text-sm">Free delivery for all orders over $140</p>
+            </div>
+            <div className="text-center">
+              {/* <img src="path/to/customer-service-icon.svg" alt="24/7 Customer Service" className="mx-auto mb-2" /> */}
+              <h4 className="font-bold">24/7 CUSTOMER SERVICE</h4>
+              <p className="text-sm">Friendly 24/7 customer support</p>
+            </div>
+            <div className="text-center">
+              {/* <img src="path/to/money-back-icon.svg" alt="Money Back Guarantee" className="mx-auto mb-2" /> */}
+              <h4 className="font-bold">MONEY BACK GUARANTEE</h4>
+              <p className="text-sm">We return money within 30 days</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   );
 }
-
+//img
 // Helper function to get category icons
 const getCategoryIcon = (categoryName) => {
   const icons = {

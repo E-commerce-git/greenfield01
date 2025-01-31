@@ -32,7 +32,7 @@ function App() {
             <Route path="/category/:categoryId" element={<ProductList />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/Payment" element={<Payment />} />
-            <Route path="/search/:query" element={<SearchResults />} /> {/* Add this route */}
+            <Route path="/search/:query" element={<SearchResults />} />
           </Routes>
           <Footer />
         </BrowserRouter>
