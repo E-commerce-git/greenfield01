@@ -11,6 +11,7 @@ const LoginForm = () => {
     password: '',
     role: 'user'
   });
+console.log(formData , "formData");
 
   const dispatch = useDispatch();
   const { loading, error } = useSelector((state) => state.auth);
