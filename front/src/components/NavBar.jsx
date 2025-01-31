@@ -1,6 +1,35 @@
+import React, { useState, useEffect } from 'react';
+
 import { Link, useNavigate } from 'react-router-dom';
 
 export default function Navbar() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState(null);
+  const [showUserInfo, setShowUserInfo] = useState(false);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch('/api/user/check-auth', {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        const data = await response.json();
+        console.log('Auth response:', data); // Debug log
+        setIsAuthenticated(data.isAuthenticated);
+        setUser(data.user);
+      } catch (error) {
+        console.error('Auth check failed:', error);
+      }
+    };
+    
+    checkAuth();
+  }, []);
+
+  // Debug logs
+  console.log('Auth state:', { isAuthenticated, user, showUserInfo });
+
   const navigate = useNavigate();
 
   return (
@@ -16,7 +45,7 @@ export default function Navbar() {
             <Link to="/about" className="text-gray-800 hover:text-blue-600 transition duration-200">About</Link>
             <Link to="#" className="text-gray-800 hover:text-blue-600 transition duration-200">Shop</Link>
             <Link to="#" className="text-gray-800 hover:text-blue-600 transition duration-200">Contact</Link>
-            <Link to="/signup" className="text-gray-800 hover:text-blue-600 transition duration-200">Sign Up</Link>
+            <Link to="/register" className="text-gray-800 hover:text-blue-600 transition duration-200">Sign Up</Link>
           </div>
 
           {/* Search Bar */}
@@ -58,17 +87,53 @@ export default function Navbar() {
             </button>
 
             {/* Profile Icon */}
-            <a href="/profile" className="text-gray-800 hover:text-blue-600 transition duration-200"/>
-            <Link to="#" className="text-gray-800 hover:text-blue-600 transition duration-200" aria-label="Profile">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M12 2c2.21 0 4 1.79 4 4s-1.79 4-4 4-4-1.79-4-4 1.79-4 4-4zM12 14c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6z"
-                ></path>
-              </svg>
-            </Link>
+            <div className="relative">
+              <Link 
+                to="/profile" 
+                className={`text-gray-800 hover:text-red-600 transition duration-200 ${isAuthenticated ? '!text-red-500' : ''}`}
+                onMouseEnter={() => {
+                  setShowUserInfo(true);
+                }}
+                onMouseLeave={() => {
+                  setShowUserInfo(false);
+                }}
+              >
+                <div className="flex flex-col items-center">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M12 2c2.21 0 4 1.79 4 4s-1.79 4-4 4-4-1.79-4-4 1.79-4 4-4zM12 14c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6z"
+                    ></path>
+                  </svg>
+                  {isAuthenticated && user && (
+                    <span className="text-xs text-gray-600 mt-1">
+                      {user.userName || user.name || 'User'}
+                    </span>
+                  )}
+                </div>
+              </Link>
+              {showUserInfo && isAuthenticated && user && (
+                <div className="absolute right-0 mt-2 py-2 px-4 bg-white rounded-md shadow-lg border border-gray-200 z-50 min-w-[200px]">
+                  <p className="whitespace-nowrap text-sm font-medium text-gray-800 mb-2">
+                    Welcome, {user.userName || user.name || 'User'}!
+                  </p>
+                  <hr className="my-2" />
+                  <button 
+                    onClick={() => {
+                      localStorage.removeItem('token');
+                      setIsAuthenticated(false);
+                      setUser(null);
+                      navigate('/');
+                    }}
+                    className="text-sm text-red-600 hover:text-red-800 transition duration-200"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
