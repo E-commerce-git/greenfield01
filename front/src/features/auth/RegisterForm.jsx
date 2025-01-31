@@ -74,142 +74,122 @@ const RegisterForm = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Create your account
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Register as User or Seller
-          </p>
+      <div className="flex w-full max-w-5xl gap-8">
+        {/* Left Section */}
+        <div className="w-1/2 flex flex-col items-center justify-center bg-gray-100 p-8 rounded-lg">
+          <img 
+            src="../assets/SignImg.png" // Replace with your actual image path
+            alt="Product"
+            className="w-full max-w-md rounded-lg shadow-lg mb-6"
+          />
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm -space-y-px">
+
+        {/* Register Form Section */}
+        <div className="w-1/2">
+          <div className="max-w-md w-full space-y-8">
             <div>
-              <label htmlFor="userName" className="sr-only">Username</label>
-              <input
-                id="userName"
-                name="userName"
-                type="text"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Username"
-                value={formData.userName}
-                onChange={handleChange}
-              />
+              <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                Create your account
+              </h2>
             </div>
-            <div>
-              <label htmlFor="email" className="sr-only">Email address</label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
-                value={formData.email}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="sr-only">Password</label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
-                value={formData.password}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <label htmlFor="confirmPassword" className="sr-only">Confirm Password</label>
-              <input
-                id="confirmPassword"
-                name="confirmPassword"
-                type="password"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Confirm Password"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <label htmlFor="role" className="sr-only">Select Role</label>
-              <select
-                id="role"
-                name="role"
-                value={formData.role}
-                onChange={handleChange}
-                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-              >
-                <option value="user">User</option>
-                <option value="seller">Seller</option>
-              </select>
-            </div>
-          </div>
-{console.log(registerSuccess)
-}
-          {registerSuccess && (
-            <div className="rounded-md bg-green-50 p-4 mb-4">
-              <div className="flex">
-                <div className="flex-shrink-0">
-                  <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
+            <form className="space-y-6" onSubmit={handleSubmit}>
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="userName" className="sr-only">Username</label>
+                  <input
+                    id="userName"
+                    name="userName"
+                    type="text"
+                    required
+                    className="block w-full px-3 py-2 bg-gray-50 text-gray-900 border-b border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-0 sm:text-sm"
+                    placeholder="Username"
+                    value={formData.userName}
+                    onChange={handleChange}
+                  />
                 </div>
-                <div className="ml-3">
-                  <h3 className="text-sm font-medium text-green-800">
-                    Registration successful! Redirecting to login...
-                  </h3>
+                <div>
+                  <label htmlFor="email" className="sr-only">Email address</label>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    required
+                    className="block w-full px-3 py-2 bg-gray-50 text-gray-900 border-b border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-0 sm:text-sm"
+                    placeholder="Email address"
+                    value={formData.email}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="password" className="sr-only">Password</label>
+                  <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    required
+                    className="block w-full px-3 py-2 bg-gray-50 text-gray-900 border-b border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-0 sm:text-sm"
+                    placeholder="Password"
+                    value={formData.password}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="confirmPassword" className="sr-only">Confirm Password</label>
+                  <input
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    type="password"
+                    required
+                    className="block w-full px-3 py-2 bg-gray-50 text-gray-900 border-b border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-0 sm:text-sm"
+                    placeholder="Confirm Password"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="role" className="sr-only">Select Role</label>
+                  <select
+                    id="role"
+                    name="role"
+                    value={formData.role}
+                    onChange={handleChange}
+                    className="block w-full px-3 py-2 bg-gray-50 text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm"
+                  >
+                    <option value="user">User</option>
+                    <option value="seller">Seller</option>
+                  </select>
                 </div>
               </div>
-            </div>
-          )}
 
-          {error && !registerSuccess && (
-            <div className="rounded-md bg-red-50 p-4 mb-4">
-              <div className="flex">
-                <div className="flex-shrink-0">
-                  <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                  </svg>
+              {error && (
+                <div className="text-red-500 text-sm text-center">
+                  {error}
                 </div>
-                <div className="ml-3">
-                  <h3 className="text-sm font-medium text-red-800">
-                    {error}
-                  </h3>
-                </div>
+              )}
+
+              <div>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-1/2 mx-auto flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500"
+                >
+                  {loading ? 'Creating account...' : `Register as ${formData.role}`}
+                </button>
               </div>
+            </form>
+            <div className="text-center mt-4">
+              <p className="text-sm text-gray-600">
+                Already have an account?{' '}
+                <a 
+                  href="/login" 
+                  className="font-medium text-amber-600 hover:text-amber-500"
+                >
+                  Sign in
+                </a>
+              </p>
             </div>
-          )}
-
-          <div>
-            <button
-              type="submit"
-              disabled={loading}
-              className={`group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white ${
-                loading 
-                  ? 'bg-indigo-400 cursor-not-allowed'
-                  : 'bg-indigo-600 hover:bg-indigo-700'
-              } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
-            >
-              {loading ? 'Registering...' : 'Register'}
-            </button>
           </div>
-
-          <div className="text-center">
-            <a 
-              href="/login" 
-              className="font-medium text-indigo-600 hover:text-indigo-500"
-            >
-              Already have an account? Sign in
-            </a>
-          </div>
-        </form>
+        </div>
       </div>
     </div>
   );
