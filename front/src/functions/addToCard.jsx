@@ -11,7 +11,7 @@ export const addToCart = (product, updateCart) => {
       
       return updatedCart;
     } else {
-      console.log("product",product);
+      // console.log("product",product);
       // Item doesn't exist, add a new one
       return [...prevCart, { ...product, quantity: 1 }];
     }

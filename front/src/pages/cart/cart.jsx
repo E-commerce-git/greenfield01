@@ -1,19 +1,20 @@
-// src/pages/Cart.jsx
-import React from 'react';
 import CartItems from './CartItems';
 import { useCart } from './CartContext';
-import createOrder from "../../functions/addOrder.jsx"
-import { useSelector } from "react-redux";
+import createOrder from "../../functions/addOrder.jsx";
+import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
   const { cartItems, total } = useCart();
-  console.log("cartItems",cartItems);
-  console.log("quantity");
-  console.log("total",total);
-  const user = useSelector((state) => state.auth.user);
-  
-  console.log("user",user)
-  
+  const navigate = useNavigate();  // Initialize useNavigate hook
+
+  const handleCheckout = async () => {
+    try {
+      const user =localStorage.getItem("userId");
+      await createOrder(user, cartItems, total, navigate); // Pass navigate here
+    } catch (err) {
+      console.error("Error during checkout:", err);
+    }
+  };
 
   return (
     <div className="container mx-auto p-4">
@@ -68,7 +69,10 @@ const Cart = () => {
           </div>
         </div>
 
-        <button className="bg-blue-500 text-white py-2 px-4 rounded w-full mt-4 hover:bg-blue-600" onClick={()=>{createOrder(user,cartItems,total)}}>
+        <button
+          className="bg-blue-500 text-white py-2 px-4 rounded w-full mt-4 hover:bg-blue-600"
+          onClick={handleCheckout} // Use the function here
+        >
           Proceed to Checkout
         </button>
       </div>
