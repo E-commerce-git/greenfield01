@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Profile = ({}) => {
   const [user, setUser] = useState({});
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -13,24 +16,60 @@ const Profile = ({}) => {
 
   useEffect(() => {
     const fetchUser = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setIsAuthenticated(false);
+        return;
+      }
+
       try {
         const response = await axios.get('http://localhost:3000/api/user', {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            Authorization: `Bearer ${token}`,
           },
         });
         setUser(response.data);
+        setIsAuthenticated(true);
         setFormData({
           name: response.data.userName,
           email: response.data.email,
         });
       } catch (error) {
         console.error(error);
-        alert('Failed to fetch user data');
+        setIsAuthenticated(false);
+        localStorage.removeItem('token');
       }
     };
     fetchUser();
   }, []);
+
+  const handleRedirectToLogin = () => {
+    navigate('/login');
+  };
+
+  const handleSignOut = () => {
+    localStorage.removeItem('token');
+    setUser({});
+    setIsAuthenticated(false);
+    navigate('/login');
+  };
+
+  // If not authenticated, show login message
+  if (!isAuthenticated) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center">
+          <h2 className="text-2xl font-semibold mb-4">Please log in to continue</h2>
+          <button
+            onClick={handleRedirectToLogin}
+            className="px-6 py-2 bg-[#DB4444] text-white rounded-md hover:bg-opacity-90"
+          >
+            Go to Sign In
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const handleChange = (e) => {
     setFormData({
@@ -42,25 +81,61 @@ const Profile = ({}) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
     try {
-      const response = await axios.put('http://localhost:3000/api/user/current', formData, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
+      // Create update object with only filled fields
+      const updateData = {
+        userName: formData.name,
+        email: formData.email,
+      };
+
+      // Only include password fields if current password is provided
+      if (formData.currentPassword) {
+        if (formData.newPassword !== formData.confirmPassword) {
+          alert('New passwords do not match');
+          return;
+        }
+        updateData.currentPassword = formData.currentPassword;
+        updateData.newPassword = formData.newPassword;
+      }
+
+      const response = await axios.put(
+        'http://localhost:3000/api/user/current', 
+        updateData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        }
+      );
+
       setUser(response.data);
       setFormData({
-        name: response.data.userName,
-        email: response.data.email,
+        ...formData,
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: '',
       });
+      alert('Profile updated successfully!');
+      
     } catch (error) {
       console.error(error);
-      alert('Failed to update user data');
+      alert(error.response?.data?.message || 'Failed to update user data');
     }
   };
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-semibold">Welcome, {user.userName}!</h1>
+        <button
+          onClick={handleSignOut}
+          className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+        >
+          Sign Out
+        </button>
+      </div>
+
       <div className="flex items-center text-sm mb-8">
         <span className="text-gray-500">Home</span>
         <span className="mx-2">/</span>
