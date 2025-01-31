@@ -44,7 +44,7 @@ export default function Navbar() {
             <Link to="/" className="text-gray-800 hover:text-blue-600 transition duration-200">Home</Link>
             <Link to="/about" className="text-gray-800 hover:text-blue-600 transition duration-200">About</Link>
             <Link to="#" className="text-gray-800 hover:text-blue-600 transition duration-200">Shop</Link>
-            <Link to="#" className="text-gray-800 hover:text-blue-600 transition duration-200">Contact</Link>
+            <Link to="/ContactUs" className="text-gray-800 hover:text-blue-600 transition duration-200">Contact</Link>
             <Link to="/register" className="text-gray-800 hover:text-blue-600 transition duration-200">Sign Up</Link>
           </div>
 
