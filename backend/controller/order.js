@@ -31,11 +31,12 @@ const handleTotal = async (ProductId,quantity,OrderId,oldQuantity,t) =>{
 
 const createOrder = async(req,res)=>{
     const id = req.params.id;
+    const {total} = req.body;
     if(!id){
       return res.status(400).json({ error: "No user ID provided" });
     }
     try{
-      const newOrder = await Order.create({UserId: id});
+      const newOrder = await Order.create({UserId: id,total:total});
       res.status(201).json({ message: "Order created successfully", order: newOrder });
 
     }catch (err){

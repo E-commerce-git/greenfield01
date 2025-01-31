@@ -25,14 +25,21 @@ const getOne = async (OrderId, productId) => {
 };
 //--------------------------------------------------------
 
-// const addTo = async (req, res) => {
+const addToCart = async (req, res) => {
 
-// };
+};
 
 
 const insertIntoOrderProduct = async (req, res) => {
   const { productId, quantity, OrderId } = req.body;
   verifyData(productId, quantity, OrderId);
+  try{
+    const addedProduct = await orderProduct.create({ProductId:   productId, quantity:quantity,OrderId: OrderId} )
+    return res.status(201).json({message:"product ordered successfully"})
+  }catch(err){
+    console.error("Error inserting into orderProduct:", err);
+    throw new Error("Failed inserting into orderProduct");
+  }
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -95,4 +102,4 @@ await handleTotal(productId,0,OrderId,cart.quantity,t)
   }
 };
 
-module.exports = { addToCart, removeFromCart, updateCart };
+module.exports = { addToCart,insertIntoOrderProduct, removeFromCart, updateCart };

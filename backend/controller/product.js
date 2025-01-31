@@ -16,13 +16,14 @@ module.exports = {
     addProduct: async (req, res) => {
         try {
             const { name, price, description, stock, imageUrl, size, categoryId } = req.body;
-            const userId = req.params.id;
+            const userId = req.user.id;
 
             // Find the user
             const user = await User.findByPk(userId);
             if (!user) {
                 return res.status(404).json({ message: "User not found" });
             }
+
             // Check if the user is a seller
             if (user.role !== "seller") {
                 return res.status(403).json({ message: "Only sellers can add products" });
@@ -33,8 +34,6 @@ module.exports = {
             if (!category) {
                 return res.status(400).json({ message: "Invalid category" });
             }
-            console.log(category,"categorycategorycategory");
-            
 
             // Create the product
             const product = await Product.create({

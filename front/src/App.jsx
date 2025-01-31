@@ -1,5 +1,4 @@
 // src/App.jsx
-import React from 'react';
 import { Provider } from 'react-redux';
 import store from './store/store';
 import { CartProvider } from './pages/cart/CartContext';  // Import the CartProvider
@@ -21,7 +20,7 @@ function App() {
         <BrowserRouter>
           <Navbar />
           <Routes>
-          <Route path="*" element={<NotFound />} />
+            <Route path="*" element={<NotFound />} />
             <Route path="/" element={<ProductList />} />
             <Route path="/about" element={<About />} />
             <Route path="/register" element={<RegisterForm />} />

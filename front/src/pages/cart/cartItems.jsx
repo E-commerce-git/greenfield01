@@ -1,9 +1,9 @@
 // src/components/CartItems.jsx
 import React, { useState, useContext } from 'react';
-import { useCart } from './CartContext';
+import { useCart } from '../cart/CartContext';
 
 const CartItems = ({ name, price, imageUrl, initialQuantity }) => {
-  const { cartItems, updateCart } = useCart();
+  const { updateCart } = useCart();
   const [itemQuantity, setItemQuantity] = useState(initialQuantity);
 
   const handleQuantityChange = (e) => {
@@ -11,24 +11,36 @@ const CartItems = ({ name, price, imageUrl, initialQuantity }) => {
     const updatedQuantity = isNaN(value) || value < 0 ? 0 : value;
     setItemQuantity(updatedQuantity);
 
-    const updatedItem = { name, price, quantity: updatedQuantity, imageUrl };
-    updateCart(updatedItem);
+    updateCart((prevItems) => {
+      const updatedItems = prevItems.map(item =>
+        item.name === name ? { ...item, quantity: updatedQuantity } : item
+      );
+      return updatedItems;
+    });
   };
 
   const handleIncrement = () => {
     const updatedQuantity = itemQuantity + 1;
     setItemQuantity(updatedQuantity);
 
-    const updatedItem = { name, price, quantity: updatedQuantity, imageUrl };
-    updateCart(updatedItem);
+    updateCart((prevItems) => {
+      const updatedItems = prevItems.map(item =>
+        item.name === name ? { ...item, quantity: updatedQuantity } : item
+      );
+      return updatedItems;
+    });
   };
 
   const handleDecrement = () => {
     const updatedQuantity = itemQuantity > 0 ? itemQuantity - 1 : 0;
     setItemQuantity(updatedQuantity);
 
-    const updatedItem = { name, price, quantity: updatedQuantity, imageUrl };
-    updateCart(updatedItem);
+    updateCart((prevItems) => {
+      const updatedItems = prevItems.map(item =>
+        item.name === name ? { ...item, quantity: updatedQuantity } : item
+      );
+      return updatedItems;
+    });
   };
 
   return (
