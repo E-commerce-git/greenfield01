@@ -11,7 +11,7 @@ const Profile = ({}) => {
     email: '',
     currentPassword: '',
     newPassword: '',
-    confirmPassword: '',
+    confirmPassword: '',  
   });
 
   useEffect(() => {

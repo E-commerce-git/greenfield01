@@ -1,5 +1,5 @@
 const express = require('express');
-const { login,register,getAllUser, deleteUser, updateUser,currentUser,getUserById, checkAuth } = require('../controller/user');
+const { login,register,getAllUser, deleteUser, updateUser,currentUser,getUserById, checkAuth,registerAdmin,LoginAdmin,updateUserfromAdmin } = require('../controller/user');
 const authenticateJWT=require("../auth/auth")
 const Router = express.Router()
 Router.put('/current',authenticateJWT,updateUser)
@@ -8,6 +8,9 @@ Router.get('/',getAllUser)
 Router.get("/getUser", authenticateJWT, currentUser)
 Router.post("/register",register)
 Router.post("/login",login)
-Router.get('/:id', getUserById);
+Router.get('/user/:id', getUserById);
 Router.get('/check-auth', authenticateJWT, checkAuth);
-module.exports = Router
+Router.post("/registeradmin",registerAdmin)
+Router.post("/loginadmin",LoginAdmin)
+Router.put('/:id',updateUserfromAdmin)
+module.exports = Router 

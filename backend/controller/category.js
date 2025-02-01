@@ -67,27 +67,21 @@ module.exports = {
     try {
       const { id } = req.params;
 
-      // Find the category
-      const category = await Category.findByPk(id);
-      if (!category) {
-        return res.status(404).json({ message: "Category not found" });
-      }
-
-      // Check if category has associated products
-      const productsCount = await Product.count({
+      // First, delete all products associated with this category
+      await Product.destroy({
         where: { CategoryId: id }
       });
 
-      if (productsCount > 0) {
-        return res.status(400).json({ 
-          message: "Cannot delete category with associated products. Please remove or reassign products first." 
-        });
-      }
+      // Then delete the category
+      const result = await Category.destroy({
+        where: { id }
+      });
 
-      // Delete the category
-      await category.destroy();
+      if (result === 0) {
+        return res.status(404).json({ message: "Category not found" });
+      }
       
-      res.json({ message: "Category deleted successfully" });
+      res.json({ message: "Category and associated products deleted successfully" });
     } catch (error) {
       console.error("Error deleting category:", error);
       res.status(500).json({ message: "Server error" });
