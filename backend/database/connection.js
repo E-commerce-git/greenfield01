@@ -32,7 +32,9 @@ db.Category=require("./model/category")(connection, DataTypes)
 db.Payment=require("./model/payment.js")(connection, DataTypes)
 db.OrderProduct = require("./model/order_product")(connection, DataTypes)
 
-db.Category.hasMany(db.Product);
+db.Category.hasMany(db.Product, { 
+  onDelete: 'CASCADE'
+});
 db.Product.belongsTo(db.Category);
 
 db.Order.hasOne(db.Payment, { foreignKey: 'orderId', onDelete: 'CASCADE' });
@@ -46,7 +48,6 @@ db.Product.belongsTo(db.User)
 db.Order.belongsToMany(db.Product,{ through: db.OrderProduct })
 db.Product.belongsToMany(db.Order,{ through: db.OrderProduct })
 
-// connection.sync({force : true})
-
+// connection.sync({alter : true})
 
 module.exports=db
