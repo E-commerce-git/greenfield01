@@ -10,6 +10,7 @@ export const useCart = () => {
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
   const [total, setTotal] = useState(0);
+  const [orderId, setOrderId] = useState(null);
 
   // Calculate total whenever cart items change
   useEffect(() => {
@@ -24,7 +25,12 @@ export const CartProvider = ({ children }) => {
     });
   };
 
-  const value = { cartItems, total, updateCart };
+  const setOrderIdInContext = (id) => {
+    setOrderId(id);
+    console.log("Order ID stored in context:", id); 
+  };
+
+  const value = { cartItems, total, updateCart, orderId, setOrderIdInContext };
 
   return (
     <CartContext.Provider value={value}>
