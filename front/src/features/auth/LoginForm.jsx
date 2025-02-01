@@ -25,19 +25,22 @@ const LoginForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
     try {
-      dispatch(loginStart());
       const response = await axios.post('http://localhost:3000/api/user/login', formData);
-      console.log(response , "response")
       const { token, user } = response.data;
-      console.log(token , "token")
+      
+      // Make sure user object includes id
       localStorage.setItem('token', token);
-      localStorage.setItem('userRole', user.role)
+      localStorage.setItem('userRole', user.role);
+      localStorage.setItem('userId', user.id);
+      
       dispatch(loginSuccess({ token, user }));
-      navigate('/');
-    } catch (err) {
-      dispatch(loginFailure(err.response?.data?.message || 'Login failed'));
+      
+      if (user.role === 'seller') {
+        navigate('/seller/dashboard');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
     }
   };
 
@@ -100,7 +103,7 @@ const LoginForm = () => {
                     onChange={handleChange}
                     className="block w-full px-3 py-2 bg-gray-50 text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm"
                   >
-                    <option value="user">User</option>
+                    <option value="user">Customer</option>
                     <option value="seller">Seller</option>
                   </select>
                 </div>
