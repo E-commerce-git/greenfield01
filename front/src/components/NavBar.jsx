@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import axios from "axios"
+import { useSelector } from 'react-redux';
+import { Heart } from 'lucide-react';
+
 import { Link, useNavigate } from 'react-router-dom';
 
 export default function Navbar() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
   const [showUserInfo, setShowUserInfo] = useState(false);
+
+  const wishlistItems = useSelector((state) => state.wishlist.items);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -64,16 +68,14 @@ export default function Navbar() {
           {/* User Actions */}
           <div className="flex items-center space-x-4">
             {/* Heart Icon (Favoriting) */}
-            <Link to="#" className="text-gray-800 hover:text-red-600 transition duration-200" aria-label="Favorites">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M12 21l-1-1.1C5.7 15.2 2 12.3 2 8.4 2 5.5 4.5 3 7.4 3c1.7 0 3.3.8 4.6 2.1C13.3 3.8 14.9 3 16.6 3 19.5 3 22 5.5 22 8.4c0 3.9-3.7 6.8-9 11.5l-1 1.1z"
-                ></path>
-              </svg>
-            </Link>
+            <div className="relative">
+              <Heart className="w-6 h-6" />
+              {wishlistItems.length > 0 && (
+                <span className="absolute -top-2 -right-2 bg-[#db4444] text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+                  {wishlistItems.length}
+                </span>
+              )}
+            </div>
 
             {/* Shopping Cart Icon */}
             <button onClick={() => navigate('/Cart')} className="text-gray-800 hover:text-blue-600 transition duration-200" aria-label="Cart">
