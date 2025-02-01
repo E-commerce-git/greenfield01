@@ -54,15 +54,16 @@ export default function Navbar() {
 
           {/* Search Bar */}
           <div className="flex items-center">
-            <input
-              type="text"
-              placeholder="Search products..."
-              className="px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-            />
-            <button className="px-4 py-2 bg-blue-600 text-white rounded-r-md hover:bg-blue-700 transition duration-200">
-              Search
-            </button>
-          </div>
+  <input
+    type="text"
+    placeholder="Search products..."
+    className="px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-[#DB4444] focus:border-transparent"
+  />
+  <button className="px-4 py-2 bg-[#DB4444]  text-white rounded-r-md hover:bg-[#DC2626] transition duration-200">
+    Search
+  </button>
+</div>
+
 
           {/* User Actions */}
           <div className="flex items-center space-x-4">

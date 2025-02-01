@@ -4,29 +4,29 @@ import createOrder from "../../functions/addOrder.jsx";
 import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
-  const { cartItems, total } = useCart();
-  const navigate = useNavigate();  // Initialize useNavigate hook
+  const { cartItems, total, setOrderIdInContext } = useCart();
+  const navigate = useNavigate();  
 
   const handleCheckout = async () => {
     try {
-      const user =localStorage.getItem("userId");
-      await createOrder(user, cartItems, total, navigate); // Pass navigate here
+      const user = localStorage.getItem("userId");
+      await createOrder(user, cartItems, total, setOrderIdInContext, navigate);
     } catch (err) {
       console.error("Error during checkout:", err);
     }
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-        <table className="w-full mb-4">
+    <div className="container mx-auto px-4 py-8">
+      <h2 className="text-2xl font-semibold mb-6">Shopping Cart</h2>
+      <div className="bg-white shadow-lg rounded-lg p-6">
+        <table className="w-full border-collapse">
           <thead>
-            <tr>
-              <th className="text-left py-2"></th>
-              <th className="text-left py-2">Product</th>
-              <th className="text-left py-2">Price</th>
-              <th className="text-left py-2">Quantity</th>
-              <th className="text-left py-2">Subtotal</th>
+            <tr className="border-b">
+              <th className="text-left py-3 w-[40%]">Product</th>
+              <th className="text-left py-3">Price</th>
+              <th className="text-left py-3">Quantity</th>
+              <th className="text-right py-3">Subtotal</th>
             </tr>
           </thead>
           <tbody>
@@ -43,38 +43,40 @@ const Cart = () => {
           </tbody>
         </table>
 
-        <div className="mb-4">
+        <div className="flex justify-between mt-6">
           <input
             type="text"
             placeholder="Coupon Code"
-            className="border p-2 rounded-l"
+            className="px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#DB4444]"
           />
-          <button className="bg-green-500 text-white p-2 rounded-r hover:bg-green-600">
+          <button className="px-6 py-2 bg-[#DB4444] text-white rounded hover:bg-[#DC2626]">
             Apply Coupon
           </button>
         </div>
 
-        <div className="bg-gray-100 p-4 rounded">
-          <div className="flex justify-between mb-2">
-            <span>Subtotal:</span>
-            <span>${total.toFixed(2)}</span>
+        <div className="border rounded-lg p-6 mt-6 space-y-4 bg-gray-50">
+          <h3 className="text-lg font-semibold">Cart Total</h3>
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <span className="text-gray-500">Subtotal:</span>
+              <span>${total.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-500">Shipping:</span>
+              <span>Free</span>
+            </div>
+            <div className="flex justify-between font-semibold pt-2 border-t">
+              <span>Total:</span>
+              <span>${total.toFixed(2)}</span>
+            </div>
           </div>
-          <div className="flex justify-between mb-2">
-            <span>Shipping:</span>
-            <span>Free</span>
-          </div>
-          <div className="flex justify-between font-bold">
-            <span>Total:</span>
-            <span>${total.toFixed(2)}</span>
-          </div>
+          <button 
+            className="w-full py-2 bg-[#DB4444] text-white rounded hover:bg-[#DC2626]" 
+            onClick={handleCheckout}
+          >
+            Proceed to Checkout
+          </button>
         </div>
-
-        <button
-          className="bg-blue-500 text-white py-2 px-4 rounded w-full mt-4 hover:bg-blue-600"
-          onClick={handleCheckout} // Use the function here
-        >
-          Proceed to Checkout
-        </button>
       </div>
     </div>
   );
