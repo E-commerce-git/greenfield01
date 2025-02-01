@@ -1,9 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  user: null,
-  userId: localStorage.getItem('userId'), // Retrieve userId from localStorage on initial load
   token: localStorage.getItem('token'),
+  user: {
+    role: localStorage.getItem('userRole'),
+  },
+  userId: localStorage.getItem('userId'), // Retrieve userId from localStorage on initial load
   isAuthenticated: false,
   loading: false,
   error: null,
@@ -25,6 +27,7 @@ const authSlice = createSlice({
       state.token = action.payload.token;
       state.userId = action.payload.user.id; // Store user.id in state
       localStorage.setItem('userId', action.payload.user.id); // Store user.id in localStorage
+      localStorage.setItem('userRole', action.payload.user.role);
       state.error = null;
     },
     loginFailure: (state, action) => {
@@ -38,6 +41,7 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       localStorage.removeItem('token');
       localStorage.removeItem('userId'); // Remove userId from localStorage
+      localStorage.removeItem('userRole');
     },
     registerStart: (state) => {
       state.loading = true;

@@ -4,9 +4,10 @@ import Carousel from './carousel';
 import CategoryCarousel from './CategoryCarousel';
 import CountdownTimer from './CountdownTimer';
 import ProductCard from './ProductCard';
+import ProductDetails from '../pages/Product_Details';
 
-export default function ProductList() {
-  const { categoryId } = useParams();
+export default function ProductList({ showDetails = false }) {
+  const { categoryId, id } = useParams();
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -66,6 +67,11 @@ export default function ProductList() {
   const handleCategoryClick = (categoryId) => {
     navigate(`/category/${categoryId}`);
   };
+
+  if (showDetails && id) {
+    const selectedProduct = products.find(product => product.id === id);
+    return <ProductDetails product={selectedProduct} productList={products} />;
+  }
 
   if (loading) return <div className="flex justify-center items-center h-screen">Loading...</div>;
   if (error) return <div className="flex justify-center items-center h-screen text-red-500">Error: {error}</div>;
