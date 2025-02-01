@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
+import axios from "axios"
 import { Link, useNavigate } from 'react-router-dom';
 
 export default function Navbar() {
@@ -10,12 +10,12 @@ export default function Navbar() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch('/api/user/check-auth', {
+        const {data} = await axios.get('http://localhost:3000/api/user/check-auth', {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
           }
         });
-        const data = await response.json();
+    
         console.log('Auth response:', data); // Debug log
         setIsAuthenticated(data.isAuthenticated);
         setUser(data.user);

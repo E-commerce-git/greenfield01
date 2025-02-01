@@ -2,26 +2,28 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../store/redux/useAuth";
 
-const UserList = () => {
-  const [users, setUsers] = useState([]);
+const ProductList = () => {
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterRole, setFilterRole] = useState("");
-  const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [filterCategory, setFilterCategory] = useState("");
+  const [categories, setCategories] = useState([]);
   const navigate = useNavigate();
   
   useAuth();
 
   useEffect(() => {
-    fetchUsers();
+    fetchProducts();
+    fetchCategories();
   }, []);
 
-  const fetchUsers = async () => {
+  const fetchProducts = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:3000/api/user/", {
+      const response = await fetch("http://localhost:3000/api/product/products", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -29,27 +31,44 @@ const UserList = () => {
 
       if (response.ok) {
         const data = await response.json();
-        setUsers(data);
+        setProducts(data.products);
       } else {
-        setError("Failed to fetch users");
+        setError("Failed to fetch products");
       }
     } catch (error) {
-      setError("Error fetching users");
+      setError("Error fetching products");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDeleteClick = (user) => {
-    setSelectedUser(user);
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/api/category/categories", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setCategories(data.categories);
+      }
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
+  };
+
+  const handleDeleteClick = (product) => {
+    setSelectedProduct(product);
     setIsDeleteModalOpen(true);
   };
 
   const handleDelete = async () => {
-    if (!selectedUser) return;
+    if (!selectedProduct) return;
 
     try {
-      const response = await fetch(`http://localhost:3000/api/user/${selectedUser.id}`, {
+      const response = await fetch(`http://localhost:3000/api/product/${selectedProduct.id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -57,35 +76,22 @@ const UserList = () => {
       });
 
       if (response.ok) {
-        setUsers(users.filter(u => u.id !== selectedUser.id));
+        setProducts(products.filter(p => p.id !== selectedProduct.id));
         setIsDeleteModalOpen(false);
-        setSelectedUser(null);
+        setSelectedProduct(null);
       } else {
         const data = await response.json();
-        setError(data.message || "Failed to delete user");
+        setError(data.message || "Failed to delete product");
       }
     } catch (error) {
-      setError("Error deleting user");
+      setError("Error deleting product");
     }
   };
 
-  const getRoleBadgeColor = (role) => {
-    switch (role) {
-      case 'admin':
-        return 'bg-red-100 text-red-800';
-      case 'seller':
-        return 'bg-blue-100 text-blue-800';
-      default:
-        return 'bg-green-100 text-green-800';
-    }
-  };
-
-  const filteredUsers = users.filter(user => {
-    const matchesSearch = 
-      user.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesRole = !filterRole || user.role === filterRole;
-    return matchesSearch && matchesRole;
+  const filteredProducts = products.filter(product => {
+    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = !filterCategory || product.Category?.id.toString() === filterCategory;
+    return matchesSearch && matchesCategory;
   });
 
   return (
@@ -93,7 +99,7 @@ const UserList = () => {
       <header className="bg-white shadow">
         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
-            <h1 className="text-3xl font-bold text-gray-900">Users</h1>
+            <h1 className="text-3xl font-bold text-gray-900">Products</h1>
             <Link
               to="/dashboard"
               className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition duration-300"
@@ -110,7 +116,7 @@ const UserList = () => {
           <div className="relative">
             <input
               type="text"
-              placeholder="Search users..."
+              placeholder="Search products..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -131,18 +137,20 @@ const UserList = () => {
           </div>
 
           <select
-            value={filterRole}
-            onChange={(e) => setFilterRole(e.target.value)}
+            value={filterCategory}
+            onChange={(e) => setFilterCategory(e.target.value)}
             className="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            <option value="">All Roles</option>
-            <option value="admin">Admin</option>
-            <option value="seller">Seller</option>
-            <option value="user">User</option>
+            <option value="">All Categories</option>
+            {categories.map(category => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
           </select>
 
           <div className="text-right text-gray-600">
-            Total Users: {filteredUsers.length}
+            Total Products: {filteredProducts.length}
           </div>
         </div>
 
@@ -166,37 +174,38 @@ const UserList = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredUsers.map((user) => (
+            {filteredProducts.map((product) => (
               <div
-                key={user.id}
+                key={product.id}
                 className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
               >
                 <div className="p-6">
                   <div className="flex justify-between items-start mb-4">
                     <div>
                       <h3 className="text-xl font-semibold text-gray-900">
-                        {user.userName}
+                        {product.name}
                       </h3>
-                      <p className="text-sm text-gray-500">{user.email}</p>
+                      <p className="text-sm text-gray-500">
+                        Category: {product.Category?.name || 'Uncategorized'}
+                      </p>
                     </div>
-                    <span className={`text-xs font-medium px-2.5 py-0.5 rounded ${getRoleBadgeColor(user.role)}`}>
-                      {user.role}
+                    <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">
+                      ${product.price}
                     </span>
                   </div>
 
-                  <div className="mt-6 flex justify-between">
+                  <div className="space-y-2">
+                    <p className="text-sm text-gray-600">
+                      Size: {product.size}
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      Stock: {product.stock}
+                    </p>
+                  </div>
+
+                  <div className="mt-6 flex justify-end">
                     <button
-                      onClick={() => navigate(`/users/${user.id}`)}
-                      className="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-md transition duration-300"
-                    >
-                      <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                      </svg>
-                      View Profile
-                    </button>
-                    <button
-                      onClick={() => handleDeleteClick(user)}
+                      onClick={() => handleDeleteClick(product)}
                       className="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-md transition duration-300"
                     >
                       <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -211,9 +220,9 @@ const UserList = () => {
           </div>
         )}
 
-        {!loading && filteredUsers.length === 0 && (
+        {!loading && filteredProducts.length === 0 && (
           <div className="text-center text-gray-600 mt-8">
-            No users found
+            No products found
           </div>
         )}
       </main>
@@ -223,10 +232,10 @@ const UserList = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-lg max-w-md w-full p-6">
             <h3 className="text-lg font-medium text-gray-900 mb-4">
-              Delete User
+              Delete Product
             </h3>
             <p className="text-sm text-gray-500 mb-4">
-              Are you sure you want to delete user "{selectedUser?.userName}"? This action cannot be undone.
+              Are you sure you want to delete "{selectedProduct?.name}"?
             </p>
             <div className="flex justify-end space-x-4">
               <button
@@ -249,4 +258,4 @@ const UserList = () => {
   );
 };
 
-export default UserList;
+export default ProductList; 
