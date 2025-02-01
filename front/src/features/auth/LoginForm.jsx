@@ -48,7 +48,7 @@ console.log(formData , "formData");
         {/* Product Image Section */}
         <div className="w-1/2 flex flex-col items-center justify-center bg-gray-100 p-8 rounded-lg">
           <img 
-            src="../../assets" // Replace with your actual image path
+            src="../../assets" 
             alt="Product"
             className="w-full max-w-md rounded-lg shadow-lg mb-6"
           />
