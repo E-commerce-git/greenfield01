@@ -8,7 +8,7 @@ module.exports = {
             });
             res.json({ products });
         } catch (error) {
-            console.error("Error getting products:", error);
+            console.error("Error getting products:", error); 
             res.status(500).json({ message: "Server error" });
         }
     },
@@ -58,18 +58,19 @@ module.exports = {
         try {
             const productId = req.params.id;
             const userId = req.user.id;
-
+            const userRole = req.user.role;
+    
             // Find the product
             const product = await Product.findByPk(productId);
             if (!product) {
                 return res.status(404).json({ message: "Product not found" });
             }
-
-            // Check if the user is the owner of the product or an admin
-            if (product.UserId !== userId && req.user.role !== 'admin') {
+    
+            // Check if the user is the product owner, an admin, or a seller
+            if (product.UserId !== userId && userRole !== "admin" && userRole !== "seller") {
                 return res.status(403).json({ message: "Unauthorized to delete this product" });
             }
-
+    
             await product.destroy();
             res.json({ message: "Product deleted successfully" });
         } catch (error) {
@@ -77,6 +78,7 @@ module.exports = {
             res.status(500).json({ message: "Server error" });
         }
     },
+    
 
     updateProduct: async (req, res) => {
         try {
@@ -91,7 +93,7 @@ module.exports = {
             }
 
             // Check if the user is the owner of the product or an admin
-            if (product.UserId !== userId && req.user.role !== 'admin') {
+            if (product.UserId !== userId && req.user.role !== 'seller') {
                 return res.status(403).json({ message: "Unauthorized to update this product" });
             }
 

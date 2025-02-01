@@ -2,26 +2,26 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../store/redux/useAuth";
 
-const UserList = () => {
-  const [users, setUsers] = useState([]);
+const CategoryList = () => {
+  const [categories, setCategories] = useState([]);
+  const [categoryProducts, setCategoryProducts] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterRole, setFilterRole] = useState("");
-  const [selectedUser, setSelectedUser] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const navigate = useNavigate();
   
   useAuth();
 
   useEffect(() => {
-    fetchUsers();
+    fetchCategories();
   }, []);
 
-  const fetchUsers = async () => {
+  const fetchCategories = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:3000/api/user/", {
+      const response = await fetch("http://localhost:3000/api/category/categories", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -29,27 +29,51 @@ const UserList = () => {
 
       if (response.ok) {
         const data = await response.json();
-        setUsers(data);
+        setCategories(data.categories);
+        // Fetch products for each category
+        data.categories.forEach(category => {
+          fetchProductsByCategory(category.id);
+        });
       } else {
-        setError("Failed to fetch users");
+        setError("Failed to fetch categories");
       }
     } catch (error) {
-      setError("Error fetching users");
+      setError("Error fetching categories");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDeleteClick = (user) => {
-    setSelectedUser(user);
+  const fetchProductsByCategory = async (categoryId) => {
+    try {
+      const response = await fetch(`http://localhost:3000/api/category/${categoryId}/products`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setCategoryProducts(prev => ({
+          ...prev,
+          [categoryId]: data.products
+        }));
+      }
+    } catch (error) {
+      console.error("Error fetching category products:", error);
+    }
+  };
+
+  const handleDeleteClick = (category) => {
+    setSelectedCategory(category);
     setIsDeleteModalOpen(true);
   };
 
   const handleDelete = async () => {
-    if (!selectedUser) return;
+    if (!selectedCategory) return;
 
     try {
-      const response = await fetch(`http://localhost:3000/api/user/${selectedUser.id}`, {
+      const response = await fetch(`http://localhost:3000/api/category/delete/${selectedCategory.id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -57,43 +81,28 @@ const UserList = () => {
       });
 
       if (response.ok) {
-        setUsers(users.filter(u => u.id !== selectedUser.id));
+        setCategories(categories.filter(c => c.id !== selectedCategory.id));
         setIsDeleteModalOpen(false);
-        setSelectedUser(null);
+        setSelectedCategory(null);
       } else {
         const data = await response.json();
-        setError(data.message || "Failed to delete user");
+        setError(data.message || "Failed to delete category");
       }
     } catch (error) {
-      setError("Error deleting user");
+      setError("Error deleting category");
     }
   };
 
-  const getRoleBadgeColor = (role) => {
-    switch (role) {
-      case 'admin':
-        return 'bg-red-100 text-red-800';
-      case 'seller':
-        return 'bg-blue-100 text-blue-800';
-      default:
-        return 'bg-green-100 text-green-800';
-    }
-  };
-
-  const filteredUsers = users.filter(user => {
-    const matchesSearch = 
-      user.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesRole = !filterRole || user.role === filterRole;
-    return matchesSearch && matchesRole;
-  });
+  const filteredCategories = categories.filter(category =>
+    category.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="min-h-screen bg-gray-100">
       <header className="bg-white shadow">
         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
-            <h1 className="text-3xl font-bold text-gray-900">Users</h1>
+            <h1 className="text-3xl font-bold text-gray-900">Categories</h1>
             <Link
               to="/dashboard"
               className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition duration-300"
@@ -105,44 +114,19 @@ const UserList = () => {
       </header>
 
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        {/* Search, Filter, and Stats */}
-        <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
-          <div className="relative">
+        {/* Search and Stats */}
+        <div className="mb-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div className="w-full sm:w-64">
             <input
               type="text"
-              placeholder="Search users..."
+              placeholder="Search categories..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            <svg
-              className="absolute right-3 top-2.5 h-5 w-5 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
           </div>
-
-          <select
-            value={filterRole}
-            onChange={(e) => setFilterRole(e.target.value)}
-            className="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="">All Roles</option>
-            <option value="admin">Admin</option>
-            <option value="seller">Seller</option>
-            <option value="user">User</option>
-          </select>
-
-          <div className="text-right text-gray-600">
-            Total Users: {filteredUsers.length}
+          <div className="text-gray-600">
+            Total Categories: {categories.length}
           </div>
         </div>
 
@@ -166,37 +150,42 @@ const UserList = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredUsers.map((user) => (
+            {filteredCategories.map((category) => (
               <div
-                key={user.id}
+                key={category.id}
                 className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
               >
                 <div className="p-6">
-                  <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <h3 className="text-xl font-semibold text-gray-900">
-                        {user.userName}
-                      </h3>
-                      <p className="text-sm text-gray-500">{user.email}</p>
-                    </div>
-                    <span className={`text-xs font-medium px-2.5 py-0.5 rounded ${getRoleBadgeColor(user.role)}`}>
-                      {user.role}
+                  <div className="flex justify-between items-start">
+                    <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                      {category.name}
+                    </h3>
+                    <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
+                      {categoryProducts[category.id]?.length || 0} Products
                     </span>
                   </div>
 
-                  <div className="mt-6 flex justify-between">
+                  {categoryProducts[category.id]?.length > 0 && (
+                    <div className="mt-4">
+                      <h4 className="text-sm font-medium text-gray-700 mb-2">Associated Products:</h4>
+                      <ul className="text-sm text-gray-600 list-disc list-inside">
+                        {categoryProducts[category.id].slice(0, 3).map(product => (
+                          <li key={product.id} className="truncate">
+                            {product.name}
+                          </li>
+                        ))}
+                        {categoryProducts[category.id].length > 3 && (
+                          <li className="text-blue-500">
+                            +{categoryProducts[category.id].length - 3} more
+                          </li>
+                        )}
+                      </ul>
+                    </div>
+                  )}
+
+                  <div className="mt-6 flex justify-end">
                     <button
-                      onClick={() => navigate(`/users/${user.id}`)}
-                      className="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-md transition duration-300"
-                    >
-                      <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                      </svg>
-                      View Profile
-                    </button>
-                    <button
-                      onClick={() => handleDeleteClick(user)}
+                      onClick={() => handleDeleteClick(category)}
                       className="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-md transition duration-300"
                     >
                       <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -211,9 +200,9 @@ const UserList = () => {
           </div>
         )}
 
-        {!loading && filteredUsers.length === 0 && (
+        {!loading && filteredCategories.length === 0 && (
           <div className="text-center text-gray-600 mt-8">
-            No users found
+            No categories found
           </div>
         )}
       </main>
@@ -223,10 +212,10 @@ const UserList = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-lg max-w-md w-full p-6">
             <h3 className="text-lg font-medium text-gray-900 mb-4">
-              Delete User
+              Delete Category
             </h3>
             <p className="text-sm text-gray-500 mb-4">
-              Are you sure you want to delete user "{selectedUser?.userName}"? This action cannot be undone.
+              Are you sure you want to delete "{selectedCategory?.name}"? This will also delete all associated products.
             </p>
             <div className="flex justify-end space-x-4">
               <button
@@ -249,4 +238,4 @@ const UserList = () => {
   );
 };
 
-export default UserList;
+export default CategoryList; 
