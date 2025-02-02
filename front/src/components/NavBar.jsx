@@ -20,9 +20,9 @@ export default function Navbar() {
       const token = localStorage.getItem('token');
       
       if (!token) {
-        setIsAuthenticated(false);
-        setUser(null);
-        return;
+        setIsAuthenticated(false)
+        setUser(null)
+        return
       }
 
       try {

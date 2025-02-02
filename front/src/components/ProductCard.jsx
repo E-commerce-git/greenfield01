@@ -6,11 +6,11 @@ import axios from 'axios';
 
 export default function ProductCard({ product, onDelete }) {
   const { updateCart } = useCart(); // Get updateCart from context
-  const { user } = useAuth(); // Get the user from auth context
+  const { user } = useAuth(); 
 
 
   const handleDelete = async (e) => {
-    e.stopPropagation(); // Prevent navigation when clicking delete
+    e.stopPropagation()
     try {
       const token = localStorage.getItem('token');
       await axios.delete(`http://localhost:3000/api/product/${product.id}`, {
