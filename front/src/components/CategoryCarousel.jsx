@@ -1,85 +1,76 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import { Navigation } from 'swiper/modules';
 
-export default function CategoryCarousel({ categoryId }) {
-  const [images, setImages] = useState([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  // Category-specific carousel images
-  const categoryImages = {
-    women: [
-      'https://example.com/women-fashion-1.jpg',
-      'https://example.com/women-fashion-2.jpg',
-      'https://example.com/women-fashion-3.jpg',
-    ],
-    men: [
-      'https://example.com/men-fashion-1.jpg',
-      'https://example.com/men-fashion-2.jpg',
-      'https://example.com/men-fashion-3.jpg',
-    ],
-    kids: [
-      'https://example.com/kids-fashion-1.jpg',
-      'https://example.com/kids-fashion-2.jpg',
-      'https://example.com/kids-fashion-3.jpg',
-    ],
-  };
-
-  useEffect(() => {
-    setImages(categoryImages[categoryId] || []);
-  }, [categoryId]);
-
-  const nextSlide = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
-  };
-
-  const prevSlide = () => {
-    setCurrentIndex((prevIndex) =>
-      prevIndex === 0 ? images.length - 1 : prevIndex - 1
-    );
-  };
-
-  useEffect(() => {
-    const interval = setInterval(nextSlide, 3000);
-    return () => clearInterval(interval);
-  }, [images.length]);
-
-  if (images.length === 0) return null;
+export default function CategoryCarousel({ categories, selectedCategory, onCategoryClick }) {
+  // Debug log to check categories
+  console.log('Categories in carousel:', categories);
 
   return (
-    <div className="relative max-w-full mx-auto overflow-hidden">
-      <div className="w-full transition-transform duration-500 ease-in-out">
-        <img
-          src={images[currentIndex]}
-          alt={`${categoryId} fashion ${currentIndex + 1}`}
-          className="w-full h-96 object-cover rounded-lg shadow-lg"
-        />
-      </div>
-
-      {/* Navigation Arrows */}
-      <button
-        onClick={prevSlide}
-        className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-black text-white p-3 rounded-full opacity-70 hover:opacity-100 transition-opacity duration-200"
+    <div className="my-8">
+      <h2 className="text-2xl font-semibold mb-4">Browse by Category</h2>
+      <Swiper
+        modules={[Navigation]}
+        spaceBetween={20}
+        slidesPerView={4}
+        navigation
+        breakpoints={{
+          320: { slidesPerView: 2 },
+          640: { slidesPerView: 3 },
+          768: { slidesPerView: 4 },
+        }}
       >
-        &#8592;
-      </button>
-      <button
-        onClick={nextSlide}
-        className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-black text-white p-3 rounded-full opacity-70 hover:opacity-100 transition-opacity duration-200"
-      >
-        &#8594;
-      </button>
-
-      {/* Dots Navigation */}
-      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-        {images.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => setCurrentIndex(index)}
-            className={`w-3 h-3 rounded-full ${
-              currentIndex === index ? 'bg-blue-500' : 'bg-gray-500'
-            } transition-all duration-300`}
-          />
+        {categories && categories.map((category) => (
+          <SwiperSlide key={category.id}>
+            <button
+              onClick={() => onCategoryClick(category.id)}
+              className={`w-full p-4 rounded-lg transition-all duration-300 ${
+                selectedCategory === category.id.toString()
+                  ? 'bg-[#DB4444] text-white'
+                  : 'bg-gray-100 hover:bg-gray-200'
+              }`}
+            >
+              <div className="flex flex-col items-center gap-2">
+                {getCategoryIcon(category.name)}
+                <span className="text-sm font-medium">{category.name}</span>
+              </div>
+            </button>
+          </SwiperSlide>
         ))}
-      </div>
+      </Swiper>
     </div>
   );
-} 
+}
+
+const getCategoryIcon = (categoryName) => {
+  const icons = {
+    'Phones': (
+      <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+        <path d="M38.9375 6.125H17.0625C15.5523 6.125 14.3125 7.36484 14.3125 8.875V47.125C14.3125 48.6352 15.5523 49.875 17.0625 49.875H38.9375C40.4477 49.875 41.6875 48.6352 41.6875 47.125V8.875C41.6875 7.36484 40.4477 6.125 38.9375 6.125Z" 
+          stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    ),
+    'Computers': (
+      <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+        <path d="M46.6667 9.33334H9.33333C8.04467 9.33334 7 10.378 7 11.6667V35C7 36.2887 8.04467 37.3333 9.33333 37.3333H46.6667C47.9553 37.3333 49 36.2887 49 35V11.6667C49 10.378 47.9553 9.33334 46.6667 9.33334Z" 
+          stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    ),
+    'SmartWatch': (
+      <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+        <path d="M35 14H21C17.134 14 14 17.134 14 21V35C14 38.866 17.134 42 21 42H35C38.866 42 42 38.866 42 35V21C42 17.134 38.866 14 35 14Z" 
+          stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    ),
+    // Add default icon for other categories
+    'default': (
+      <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+        <rect x="8" y="8" width="40" height="40" rx="20" stroke="currentColor" strokeWidth="2"/>
+      </svg>
+    )
+  };
+
+  return icons[categoryName] || icons['default'];
+}; 

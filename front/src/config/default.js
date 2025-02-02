@@ -1,9 +1,4 @@
-// export default {
-//     development: {
-//         STRIPE_PUBLIC_KEY: import.meta.env.STRIPE_PUBLIC_KEY,
-//         STRIPE_SECRET_KEY: import.meta.env.STRIPE_SECRET_KEY,
-//     }
-// };
+
 
 import dotenv from 'dotenv';
 dotenv.config();

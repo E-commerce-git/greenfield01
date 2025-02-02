@@ -4,7 +4,8 @@ import { Heart } from 'lucide-react';
 import axios from 'axios';  
 import { Link, useNavigate } from 'react-router-dom';
 import { useWishlist } from '../pages/wishlist/WishlistContext';
-import { useCart } from '../pages/cart/CartContext'; // Import the useCart hook
+import { useCart } from '../pages/cart/CartContext'; 
+import apis from '../../stockApi/apistock';
 
 export default function Navbar() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -14,10 +15,9 @@ export default function Navbar() {
   const [hideTimeout, setHideTimeout] = useState(null);
 
   const { wishlistItems } = useWishlist();
-  const { cartItems } = useCart(); // Get cartItems from the CartContext
+  const { cartItems } = useCart(); 
   const navigate = useNavigate();
 
-  // Authentication check effect
   useEffect(() => {
     const checkAuth = async () => {
       const token = localStorage.getItem('token');
@@ -29,8 +29,8 @@ export default function Navbar() {
       }
 
       try {
-        const { data } = await axios.get('http://localhost:3000/api/user/check-auth', {
-          headers: { 'Authorization': `Bearer ${token}` }
+        const { data } = await axios.get(apis.auth.checkAuth, {
+          headers: apis.getHeaders()
         });
     
         setIsAuthenticated(data.isAuthenticated);
@@ -51,6 +51,13 @@ export default function Navbar() {
     if (searchQuery.trim()) {
       navigate(`/search/${searchQuery}`);
     }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setIsAuthenticated(false);
+    setUser(null);
+    navigate('/');
   };
 
   return (
@@ -75,20 +82,20 @@ export default function Navbar() {
               placeholder="Search products..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-[#DB4444] focus:border-transparent"
+              className="px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            <button 
+            <button
               type="submit"
-              className="px-4 py-2 bg-[#DB4444] text-white rounded-r-md hover:bg-[#DC2626] transition duration-200"
+              className="px-4 py-2 bg-blue-600 text-white rounded-r-md hover:bg-blue-700 transition duration-200"
             >
               Search
             </button>
           </form>
 
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-6">
             <div className="relative">
-              <Link to="/wishlist" className="text-gray-800 hover:text-red-600 transition duration-200">
-                <Heart className="w-6 h-6" />
+              <Link to="/wishlist" className="text-gray-800 hover:text-blue-600 transition duration-200">
+                <Heart className={`w-6 h-6 ${wishlistItems.length > 0 ? 'fill-current text-red-500' : ''}`} />
                 {wishlistItems.length > 0 && (
                   <span className="absolute -top-2 -right-2 bg-[#db4444] text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
                     {wishlistItems.length}
@@ -150,12 +157,7 @@ export default function Navbar() {
                   </p>
                   <hr className="my-2" />
                   <button 
-                    onClick={() => {
-                      localStorage.removeItem('token');
-                      setIsAuthenticated(false);
-                      setUser(null);
-                      navigate('/');
-                    }}
+                    onClick={handleLogout}
                     className="text-sm text-red-600 hover:text-red-800 transition duration-200"
                   >
                     Logout

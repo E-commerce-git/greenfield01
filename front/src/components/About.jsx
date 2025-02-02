@@ -1,4 +1,3 @@
-// src/components/About.jsx
 import React from "react";
 import Person1 from "../assets/56A9D19F-D5AC-49E1-AD3C-60B58F5BE2B6.jpg";
 import Person2 from "../assets/4D902F64-0F61-4AFD-B3F0-D564089B55E1.jpg";

@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { useWishlist } from '../pages/wishlist/WishlistContext';
 import axios from 'axios';
 import { Heart } from 'lucide-react';
+import apis, { makeRequest } from '../../stockApi/apistock';
 
 export default function ProductCard({ product, onDelete, onAddReview }) {
   const { updateCart } = useCart();
@@ -14,24 +15,24 @@ export default function ProductCard({ product, onDelete, onAddReview }) {
   const [hoverRating, setHoverRating] = useState(0);
   const [selectedRating, setSelectedRating] = useState(product.userRating || 0);
   const [reviews, setReviews] = useState([]);
-  const [reviewCount, setReviewCount] = useState(product.reviewCount || 0); // Add reviewCount state
+  const [reviewCount, setReviewCount] = useState(product.reviewCount || 0);
 
-  // Fetch reviews for the product
   useEffect(() => {
-    const fetchReviews = async () => {
-      try {
-        const response = await axios.get(`http://localhost:3000/api/reviews/product/${product.id}`);
-        if (response.status === 200) {
-          setReviews(response.data);
-          setReviewCount(response.data.length); // Update reviewCount based on fetched reviews
-        }
-      } catch (error) {
-        console.error('Error fetching reviews:', error);
-      }
-    };
-
     fetchReviews();
   }, [product.id]);
+
+  const fetchReviews = async () => {
+    try {
+      const response = await makeRequest(() => ({
+        url: apis.reviews.getByProduct(product.id).url,
+        method: 'GET'
+      }));
+      setReviews(response);
+      setReviewCount(response.length);
+    } catch (error) {
+      console.error('Error fetching reviews:', error);
+    }
+  };
 
   const handleAddToCart = () => {
     addToCart(product, updateCart);
@@ -40,12 +41,12 @@ export default function ProductCard({ product, onDelete, onAddReview }) {
   const handleDelete = async (e) => {
     e.stopPropagation();
     try {
-      const token = localStorage.getItem('token');
-      await axios.delete(`http://localhost:3000/api/product/${product.id}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      await makeRequest(() => ({
+        url: apis.products.delete(product.id).url,
+        method: 'DELETE',
+        ...apis.getAuthHeaders()
+      }));
+      
       if (onDelete) {
         onDelete(product.id);
       }
@@ -70,31 +71,22 @@ export default function ProductCard({ product, onDelete, onAddReview }) {
         alert('Please login to rate products');
         return;
       }
-      
-      await axios.post(`http://localhost:3000/api/reviews/add`, 
-        { productId: product.id, rating, comment: '' },
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        }
-      );
-      
-      // Update the product's average rating
+
+      await makeRequest(apis.reviews.add, {
+        productId: product.id,
+        rating,
+        comment: ''
+      });
+
       product.averageRating = ((product.averageRating * reviewCount) + rating) / (reviewCount + 1);
-      setReviewCount(reviewCount + 1); // Increment reviewCount
+      setReviewCount(reviewCount + 1);
       setSelectedRating(rating);
-      
-      // If onAddReview is provided, call it
+
       if (onAddReview) {
         onAddReview(product.id, rating, '');
       }
 
-      // Refresh reviews after submission
-      const response = await axios.get(`http://localhost:3000/api/reviews/product/${product.id}`);
-      if (response.status === 200) {
-        setReviews(response.data);
-      }
+      await fetchReviews();
     } catch (error) {
       console.error('Error submitting rating:', error);
       alert('Failed to submit rating. Please try again.');
@@ -107,14 +99,12 @@ export default function ProductCard({ product, onDelete, onAddReview }) {
 
   return (
     <div className="relative bg-white p-3 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
-      {/* Discount Badge */}
       {product.discount && (
         <div className="absolute top-3 left-3 bg-[#DB4444] text-white text-sm px-2 py-1 rounded">
           -{product.discount}%
         </div>
       )}
-      
-      {/* Favorite Button */}
+
       <button 
         className="absolute top-3 right-3 p-2 bg-white rounded-full shadow hover:bg-gray-100 transition-colors duration-200"
         onClick={handleFavoriteClick}
@@ -124,7 +114,6 @@ export default function ProductCard({ product, onDelete, onAddReview }) {
         />
       </button>
 
-      {/* Product Image */}
       {product.imageUrl && (
         <img 
           src={product.imageUrl} 
@@ -133,7 +122,6 @@ export default function ProductCard({ product, onDelete, onAddReview }) {
         />
       )}
 
-      {/* Add to Cart Button */}
       <button 
         className="w-full bg-black text-white py-2 rounded hover:bg-gray-800 transition-colors mb-3" 
         onClick={handleAddToCart}
@@ -141,7 +129,6 @@ export default function ProductCard({ product, onDelete, onAddReview }) {
         Add To Cart
       </button>
 
-      {/* Product Details */}
       <h3 className="font-medium text-base mb-2">{product.name}</h3>
       <div className="flex items-center gap-3 mb-2">
         <span className="text-[#DB4444] text-base font-medium">
@@ -154,7 +141,6 @@ export default function ProductCard({ product, onDelete, onAddReview }) {
         )}
       </div>
 
-      {/* Rating Selection */}
       <div className="flex items-center gap-2 mb-2">
         <div className="flex">
           {[...Array(5)].map((_, index) => (
@@ -178,10 +164,9 @@ export default function ProductCard({ product, onDelete, onAddReview }) {
             </button>
           ))}
         </div>
-        <span className="text-gray-500 text-sm">({reviewCount} reviews)</span> {/* Use reviewCount state */}
+        <span className="text-gray-500 text-sm">({reviewCount} reviews)</span>
       </div>
 
-      {/* Reviews Section */}
       <div className="mt-4">
         <h4 className="font-medium mb-2">Reviews</h4>
         {reviews.length > 0 ? (
@@ -210,7 +195,6 @@ export default function ProductCard({ product, onDelete, onAddReview }) {
         )}
       </div>
 
-      {/* Additional Details */}
       {product.size && (
         <div className="mt-2 text-sm text-gray-500">
           Size: {product.size}
@@ -220,7 +204,6 @@ export default function ProductCard({ product, onDelete, onAddReview }) {
         Stock: {product.stock}
       </div>
 
-      {/* Show delete button only if user is a seller */}
       {user?.role === 'seller' && (
         <button
           onClick={handleDelete}

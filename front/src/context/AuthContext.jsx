@@ -1,10 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios';
+import apis, { makeRequest } from '../../stockApi/apistock';
 
-// Create the context
 const AuthContext = createContext(null);
 
-// Create the provider component
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -23,14 +21,18 @@ export const AuthProvider = ({ children }) => {
     }
 
     try {
-      const response = await axios.get('http://localhost:3000/api/user/check-auth', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const response = await makeRequest(apis.auth.checkAuth);
+      const userData = response?.data?.user;
       
-      setUser(response.data.user);
-      setIsAuthenticated(true);
+      if (userData) {
+        setUser(userData);
+        setIsAuthenticated(true);
+      } else {
+        // Clear invalid token
+        localStorage.removeItem('token');
+        setUser(null);
+        setIsAuthenticated(false);
+      }
     } catch (error) {
       console.error('Auth check failed:', error);
       localStorage.removeItem('token');
@@ -43,19 +45,45 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (credentials) => {
     try {
-      const response = await axios.post('http://localhost:3000/api/auth/login', credentials);
+      const response = await makeRequest(apis.auth.login, credentials);
       const { token, user } = response.data;
       
-      console.log('Login response:', response.data);
-      console.log('User role:', user.role);
-      
-      localStorage.setItem('token', token);
-      setUser(user);
-      setIsAuthenticated(true);
-      return { success: true };
+      if (token && user) {
+        localStorage.setItem('token', token);
+        setUser(user);
+        setIsAuthenticated(true);
+        return { success: true };
+      } else {
+        throw new Error('Invalid response format');
+      }
     } catch (error) {
       console.error('Login failed:', error);
-      return { success: false, error: error.response?.data?.message || 'Login failed' };
+      return { 
+        success: false, 
+        error: error.response?.data?.message || 'Login failed. Please try again.' 
+      };
+    }
+  };
+
+  const register = async (userData) => {
+    try {
+      const response = await makeRequest(apis.auth.register, userData);
+      const { token, user } = response.data;
+      
+      if (token && user) {
+        localStorage.setItem('token', token);
+        setUser(user);
+        setIsAuthenticated(true);
+        return { success: true };
+      } else {
+        throw new Error('Invalid response format');
+      }
+    } catch (error) {
+      console.error('Registration failed:', error);
+      return { 
+        success: false, 
+        error: error.response?.data?.message || 'Registration failed. Please try again.' 
+      };
     }
   };
 
@@ -65,13 +93,35 @@ export const AuthProvider = ({ children }) => {
     setIsAuthenticated(false);
   };
 
+  const updateUserProfile = async (profileData) => {
+    try {
+      const response = await makeRequest(apis.user.update, profileData);
+      const updatedUser = response?.data?.user;
+      
+      if (updatedUser) {
+        setUser(updatedUser);
+        return { success: true };
+      } else {
+        throw new Error('Invalid response format');
+      }
+    } catch (error) {
+      console.error('Profile update failed:', error);
+      return { 
+        success: false, 
+        error: error.response?.data?.message || 'Profile update failed. Please try again.' 
+      };
+    }
+  };
+
   const value = {
     user,
     isAuthenticated,
     loading,
     login,
     logout,
-    checkAuthStatus
+    register,
+    checkAuthStatus,
+    updateUserProfile
   };
 
   return (
@@ -81,7 +131,6 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// Create the hook
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
