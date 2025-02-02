@@ -50,4 +50,69 @@ const createOrder = async(req,res)=>{
         res.status(500).json({ error: "Failed to create order" });
     }
 }
-module.exports = {handleTotal,createOrder}
+const getAllOrders = async (req, res) => {
+  try {
+    const allOrders = await Order.findAll();
+    return res.status(200).json({ message: "All orders retrieved", data: allOrders });
+  } catch (err) {
+    console.error("Error retrieving orders:", err);
+    return res.status(500).json({ error: "Failed to retrieve orders" });
+  }
+};
+
+const updateOrderStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    const order = await Order.findByPk(id);
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    await order.update({ status });
+    
+    res.json({ 
+      message: "Order status updated successfully", 
+      order 
+    });
+  } catch (error) {
+    console.error("Error updating order status:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+}
+
+const getOrderDetails = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const order = await Order.findOne({
+      where: { id },
+      include: [{
+        model: db.Product,
+        through: {
+          model: db.OrderProduct,
+          attributes: ['quantity']
+        },
+        include: [{
+          model: db.Category,
+          attributes: ['name']
+        }]
+      }]
+    });
+
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    res.json({
+      order,
+      products: order.Products
+    });
+  } catch (error) {
+    console.error("Error fetching order details:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+module.exports = {handleTotal,createOrder,getAllOrders,updateOrderStatus,getOrderDetails}

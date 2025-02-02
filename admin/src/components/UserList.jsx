@@ -96,7 +96,7 @@ const UserList = () => {
       </header>
 
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        {/* Search, Filter, and Stats */}
+        
         <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
           <div className="relative">
             <input
@@ -209,7 +209,7 @@ const UserList = () => {
         )}
       </main>
 
-      {/* Delete Confirmation Modal */}
+ 
       {isDeleteModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-lg max-w-md w-full p-6">
