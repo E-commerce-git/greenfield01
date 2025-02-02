@@ -103,5 +103,19 @@ module.exports = {
             console.error("Error updating product:", error);
             res.status(500).json({ message: "Server error" });
         }
+    },
+
+    Searshproductbyname: async (req, res) => {
+        const name =req.params.name
+        try {
+            const product = await Product.findAll({
+                where: {
+                    name: name
+                }
+            });
+            res.json({ product });
+        } catch (error) {
+            console.error("Error getting products:", error);
+            res.status(500).json({ message: "Server error" });
     }
-};
+}}
