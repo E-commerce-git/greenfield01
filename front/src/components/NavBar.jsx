@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Heart } from 'lucide-react';
-
+import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 
 export default function Navbar() {
