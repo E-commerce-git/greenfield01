@@ -5,8 +5,85 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GlobBuy</title>
+    <style>
+      /* Custom alert styling */
+      #customAlert {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #ffffff;
+        padding: 24px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        border-radius: 12px;
+        z-index: 1000;
+        width: 300px;
+        text-align: center;
+        font-family: Arial, sans-serif;
+      }
+      #customAlert p {
+        margin: 0 0 20px 0;
+        font-size: 16px;
+        color: #333333;
+      }
+      #customAlert button {
+        margin-top: 10px;
+        padding: 10px 20px;
+        background-color: #DB3F3F;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+      }
+      #customAlert button:hover {
+        background-color: #C23535;
+      }
+      #overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+      }
+    </style>
   </head>
   <body>
+    <!-- Custom alert HTML -->
+    <div id="overlay"></div>
+    <div id="customAlert">
+      <p id="alertMessage"></p>
+      <button id="alertClose">OK</button>
+    </div>
+
+    <script>
+      // Override the default alert function
+      window.alert = function (message) {
+        const customAlert = document.getElementById('customAlert');
+        const overlay = document.getElementById('overlay');
+        const alertMessage = document.getElementById('alertMessage');
+
+        // Set the alert message
+        alertMessage.textContent = message;
+
+        // Show the custom alert and overlay
+        customAlert.style.display = 'block';
+        overlay.style.display = 'block';
+
+        // Close the alert when the button is clicked
+        document.getElementById('alertClose').onclick = function () {
+          customAlert.style.display = 'none';
+          overlay.style.display = 'none';
+        };
+      };
+    </script>
+
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
