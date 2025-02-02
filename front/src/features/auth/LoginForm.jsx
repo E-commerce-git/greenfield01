@@ -128,19 +128,7 @@ const LoginForm = () => {
                     onChange={handleChange}
                   />
                 </div>
-                <div>
-                  <label htmlFor="role" className="sr-only">Select Role</label>
-                  <select
-                    id="role"
-                    name="role"
-                    value={formData.role}
-                    onChange={handleChange}
-                    className="block w-full px-3 py-2 bg-gray-0 text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-[#DC2626]  sm:text-sm"
-                  >
-                    <option value="user">Customer</option>
-                    <option value="seller">Seller</option>
-                  </select>
-                </div>
+                
               </div>
 
               {error && (

@@ -150,19 +150,7 @@ const RegisterForm = () => {
                     onChange={handleChange}
                   />
                 </div>
-                <div>
-                  <label htmlFor="role" className="sr-only">Select Role</label>
-                  <select
-                    id="role"
-                    name="role"
-                    value={formData.role}
-                    onChange={handleChange}
-                    className="block w-full px-3 py-2 bg-gray-50 text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-[#DC2626]  sm:text-sm"
-                  >
-                    <option value="user">User</option>
-                    <option value="seller">Seller</option>
-                  </select>
-                </div>
+               
               </div>
 
               {error && (
@@ -185,17 +173,7 @@ const RegisterForm = () => {
                 </div>
               </div>
             </form>
-            <div className="text-center mt-4">
-              <p className="text-sm text-gray-600">
-                Already have an account?{' '}
-                <a 
-                  href="/login" 
-                  className="font-medium text-[#DB4444] hover:text-[#DC2626]"
-                >
-                  Sign in
-                </a>
-              </p>
-            </div>
+            
           </div>
         </div>
       </div>
