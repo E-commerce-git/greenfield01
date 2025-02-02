@@ -20,10 +20,12 @@ export default function ProductList({ showDetails = false }) {
     if (categoryId) {
       setSelectedCategory(categoryId);
       fetchProductsByCategory(categoryId);
+    } else if (id) {
+      fetchProducts();
     } else {
       fetchProducts();
     }
-  }, [categoryId]);
+  }, [categoryId, id]);
 
   const fetchCategories = async () => {
     try {
@@ -42,6 +44,7 @@ export default function ProductList({ showDetails = false }) {
       const response = await fetch('http://localhost:3000/api/product/products');
       if (!response.ok) throw new Error('Failed to fetch products');
       const data = await response.json();
+      console.log('Product data:', data.products);
       setProducts(data.products);
     } catch (err) {
       setError(err.message);
@@ -68,8 +71,15 @@ export default function ProductList({ showDetails = false }) {
     navigate(`/category/${categoryId}`);
   };
 
+  const handleDeleteProduct = (productId) => {
+    setProducts(products.filter(product => product.id !== productId));
+  };
+
   if (showDetails && id) {
-    const selectedProduct = products.find(product => product.id === id);
+    const selectedProduct = products.find(product => String(product.id) === String(id));
+    if (loading) return <div className="flex justify-center items-center h-screen">Loading...</div>;
+    if (!selectedProduct) return <div className="flex justify-center items-center h-screen">Product not found</div>;
+    console.log('Selected product being passed:', selectedProduct);
     return <ProductDetails product={selectedProduct} productList={products} />;
   }
 
@@ -128,7 +138,16 @@ export default function ProductList({ showDetails = false }) {
           {/* Products Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {products.map(product => (
-              <ProductCard key={product.id} product={product} />
+              <div 
+                key={product.id} 
+                onClick={() => navigate(`/product/${product.id}`)}
+                className="cursor-pointer"
+              >
+                <ProductCard 
+                  product={product} 
+                  onDelete={handleDeleteProduct}
+                />
+              </div>
             ))}
           </div>
 
