@@ -31,6 +31,7 @@ db.Order=require("./model/order")(connection, DataTypes)
 db.Category=require("./model/category")(connection, DataTypes)
 db.Payment=require("./model/payment.js")(connection, DataTypes)
 db.OrderProduct = require("./model/order_product")(connection, DataTypes)
+db.Review = require("./model/reviews")(connection, DataTypes)
 
 db.Category.hasMany(db.Product, { 
   onDelete: 'CASCADE'
@@ -45,9 +46,15 @@ db.Order.belongsTo(db.User);
 db.User.hasMany(db.Product)
 db.Product.belongsTo(db.User)
 
+db.User.hasMany(db.Review);
+db.Review.belongsTo(db.User);
+db.Product.hasMany(db.Review);
+db.Review.belongsTo(db.Product);
+
 db.Order.belongsToMany(db.Product,{ through: db.OrderProduct })
 db.Product.belongsToMany(db.Order,{ through: db.OrderProduct })
 
 // connection.sync({alter : true})
 
 module.exports=db
+

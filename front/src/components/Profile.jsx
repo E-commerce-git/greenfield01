@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
-const Profile = ({}) => {
-  const [user, setUser] = useState({});
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+const Profile = () => {
+  const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
@@ -15,42 +15,17 @@ const Profile = ({}) => {
   });
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setIsAuthenticated(false);
-        return;
-      }
-
-      try {
-        const response = await axios.get('http://localhost:3000/api/user', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setUser(response.data);
-        setIsAuthenticated(true);
-        setFormData({
-          name: response.data.userName,
-          email: response.data.email,
-        });
-      } catch (error) {
-        console.error(error);
-        setIsAuthenticated(false);
-        localStorage.removeItem('token');
-      }
-    };
-    fetchUser();
-  }, []);
+    console.log('Current user:', user);
+    console.log('Is authenticated:', isAuthenticated);
+    console.log('User role:', user?.role);
+  }, [user, isAuthenticated]);
 
   const handleRedirectToLogin = () => {
     navigate('/login');
   };
 
   const handleSignOut = () => {
-    localStorage.removeItem('token');
-    setUser({});
-    setIsAuthenticated(false);
+    logout();
     navigate('/login');
   };
 
@@ -124,156 +99,180 @@ const Profile = ({}) => {
     }
   };
 
+  const SellerSection = () => {
+    console.log('Rendering SellerSection, user role:', user?.role);
+    
+    if (user?.role !== 'seller') {
+      console.log('Not a seller, returning null');
+      return null;
+    }
+    
+    return (
+      <div className="bg-white p-8 rounded-lg shadow mt-8">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-semibold">Seller Dashboard</h2>
+          <button
+            onClick={() => navigate('/SellerDashboard')}
+            className="px-6 py-2 bg-[#DB4444] text-white rounded-md hover:bg-opacity-90"
+          >
+            Go to Dashboard
+          </button>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-gray-50 p-6 rounded-lg">
+            <h3 className="text-lg font-medium mb-2">Active Products</h3>
+            <p className="text-3xl font-bold text-[#DB4444]">{user.productCount || 0}</p>
+          </div>
+          
+          <div className="bg-gray-50 p-6 rounded-lg">
+            <h3 className="text-lg font-medium mb-2">Total Sales</h3>
+            <p className="text-3xl font-bold text-[#DB4444]">${user.totalSales || 0}</p>
+          </div>
+          
+          <div className="bg-gray-50 p-6 rounded-lg">
+            <h3 className="text-lg font-medium mb-2">Store Status</h3>
+            <p className="text-lg font-medium text-green-600">Active</p>
+          </div>
+        </div>
+
+        <div className="mt-6">
+          <div className="flex space-x-4">
+            <button
+              onClick={() => navigate('/seller-dashboard/products/new')}
+              className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
+            >
+              Add New Product
+            </button>
+            <button
+              onClick={() => navigate('/seller-dashboard/orders')}
+              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+            >
+              View Orders
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold">Welcome, {user.userName}!</h1>
-        <button
-          onClick={handleSignOut}
-          className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
-        >
-          Sign Out
-        </button>
+        <h1 className="text-2xl font-semibold">Welcome, {user?.userName}!</h1>
+        <div className="flex gap-4">
+          {user?.role === 'seller' && (
+            <button
+              onClick={() => navigate('/SellerDashboard')}
+              className="px-4 py-2 bg-[#DB4444] text-white rounded-md hover:bg-opacity-90"
+            >
+              Seller Dashboard
+            </button>
+          )}
+          <button
+            onClick={handleSignOut}
+            className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+          >
+            Sign Out
+          </button>
+        </div>
       </div>
 
-      <div className="flex items-center text-sm mb-8">
-        <span className="text-gray-500">Home</span>
-        <span className="mx-2">/</span>
-        <span>My Account</span>
-      </div>
+      <div className="bg-white p-8 rounded-lg shadow">
+        <h2 className="text-2xl font-semibold mb-6">Edit Your Profile</h2>
 
-      <div className="flex flex-col md:flex-row gap-8">
-        <aside className="w-64 flex-shrink-0">
-          <div className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-4">
             <div>
-              <h3 className="font-semibold mb-3">Manage My Account</h3>
-              <nav className="space-y-2">
-                <a href="#" className="block text-[#DB4444]">
-                  My Profile
-                </a>
-                <a href="#" className="block text-gray-600 hover:text-[#DB4444]">
-                  Address Book
-                </a>
-                <a href="#" className="block text-gray-600 hover:text-[#DB4444]">
-                  My Payment Options
-                </a>
-              </nav>
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                Name
+              </label>
+              <input
+                id="name"
+                type="text"
+                name="name"
+                value={formData.name || ''}
+                onChange={handleChange}
+                className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md"
+                placeholder="Enter your name"
+              />
             </div>
             <div>
-              <h3 className="font-semibold mb-3">My Orders</h3>
-              <nav className="space-y-2">
-                <a href="#" className="block text-gray-600 hover:text-[#DB4444]">
-                  My Returns
-                </a>
-                <a href="#" className="block text-gray-600 hover:text-[#DB4444]">
-                  My Cancellations
-                </a>
-              </nav>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-3">My Wishlist</h3>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                Email
+              </label>
+              <input
+                id="email"
+                type="email"
+                name="email"
+                value={formData.email || ''}
+                onChange={handleChange}
+                className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md"
+                placeholder="Enter your email"
+              />
             </div>
           </div>
-        </aside>
 
-        <main className="flex-1">
-          <div className="bg-white p-8 rounded-lg shadow">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-semibold">Edit Your Profile</h2>
+          <div className="mt-8">
+            <h3 className="text-lg font-medium mb-4">Password Changes</h3>
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700 mb-2">
+                  Current Password
+                </label>
+                <input
+                  id="currentPassword"
+                  type="password"
+                  name="currentPassword"
+                  value={formData.currentPassword || ''}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md"
+                  placeholder="Enter current password"
+                />
+              </div>
+              <div>
+                <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 mb-2">
+                  New Password
+                </label>
+                <input
+                  id="newPassword"
+                  type="password"
+                  name="newPassword"
+                  value={formData.newPassword || ''}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md"
+                  placeholder="Enter new password"
+                />
+              </div>
+              <div>
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+                  Confirm New Password
+                </label>
+                <input
+                  id="confirmPassword"
+                  type="password"
+                  name="confirmPassword"
+                  value={formData.confirmPassword || ''}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md"
+                  placeholder="Confirm new password"
+                />
+              </div>
             </div>
-
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="space-y-4">
-                <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                    Name
-                  </label>
-                  <input
-                    id="name"
-                    type="text"
-                    name="name"
-                    value={formData.name || ''}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md"
-                    placeholder="Enter your name"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                    Email
-                  </label>
-                  <input
-                    id="email"
-                    type="email"
-                    name="email"
-                    value={formData.email || ''}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md"
-                    placeholder="Enter your email"
-                  />
-                </div>
-              </div>
-
-              <div className="mt-8">
-                <h3 className="text-lg font-medium mb-4">Password Changes</h3>
-                <div className="space-y-4">
-                  <div>
-                    <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700 mb-2">
-                      Current Password
-                    </label>
-                    <input
-                      id="currentPassword"
-                      type="password"
-                      name="currentPassword"
-                      value={formData.currentPassword || ''}
-                      onChange={handleChange}
-                      className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md"
-                      placeholder="Enter current password"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 mb-2">
-                      New Password
-                    </label>
-                    <input
-                      id="newPassword"
-                      type="password"
-                      name="newPassword"
-                      value={formData.newPassword || ''}
-                      onChange={handleChange}
-                      className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md"
-                      placeholder="Enter new password"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
-                      Confirm New Password
-                    </label>
-                    <input
-                      id="confirmPassword"
-                      type="password"
-                      name="confirmPassword"
-                      value={formData.confirmPassword || ''}
-                      onChange={handleChange}
-                      className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md"
-                      placeholder="Confirm new password"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex justify-end space-x-4 mt-8">
-                <button type="button" className="px-6 py-2 text-gray-700 hover:bg-gray-100 rounded-md">
-                  Cancel
-                </button>
-                <button type="submit" className="px-6 py-2 bg-[#DB4444] text-white rounded-md hover:bg-opacity-90">
-                  Save Changes
-                </button>
-              </div>
-            </form>
           </div>
-        </main>
+
+          <div className="flex justify-end space-x-4 mt-8">
+            <button type="button" className="px-6 py-2 text-gray-700 hover:bg-gray-100 rounded-md">
+              Cancel
+            </button>
+            <button type="submit" className="px-6 py-2 bg-[#DB4444] text-white rounded-md hover:bg-opacity-90">
+              Save Changes
+            </button>
+          </div>
+        </form>
       </div>
+
+      <SellerSection />
     </div>
   );
 };

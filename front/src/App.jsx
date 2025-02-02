@@ -2,7 +2,8 @@ import { Provider } from 'react-redux';
 import store from './store/store';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
-import { CartProvider } from './pages/cart/CartContext';  // Import the CartProvider
+import { CartProvider } from './pages/cart/CartContext';
+import { AuthProvider } from './context/AuthContext';
 import Footer from './components/Footer';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/NavBar';
@@ -36,49 +37,51 @@ const SellerRoute = ({ children }) => {
 function App() {
   return (
     <Provider store={store}>
-      <CartProvider> {/* Wrap with CartProvider */}
-        <Router>
-          <Navbar />
-          <Routes>
-            <Route path="*" element={<NotFound />} />
-            <Route path="/" element={<ProductList />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/register" element={<RegisterForm />} />
-            <Route path="/login" element={<LoginForm />} />
-            <Route path="/Cart" element={<Cart />} />
-            <Route path="/ContactUs" element={<ContactUs />} />
-            <Route path="/category/:categoryId" element={<ProductList />} />
-            <Route path="/profile" element={<Profile />} />
-            
-            {/* Payment route with Stripe */}
-            <Route 
-              path="/Payment" 
-              element={
-                <Elements stripe={stripePromise}>
-                  <Payment />
-                </Elements>
-              } 
-            />
-            
-            {/* Product details route */}
-            <Route 
-              path="/product/:id" 
-              element={<ProductList showDetails={true} />} 
-            />
-            
-            {/* Seller Dashboard route with protection */}
-            <Route 
-              path="/seller/dashboard" 
-              element={
-                <SellerRoute>
-                  <SellerDashboard />
-                </SellerRoute>
-              } 
-            />
-          </Routes>
-          <Footer />
-        </Router>
-      </CartProvider> {/* Close CartProvider */}
+      <AuthProvider>
+        <CartProvider>
+          <Router>
+            <Navbar />
+            <Routes>
+              <Route path="*" element={<NotFound />} />
+              <Route path="/" element={<ProductList />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/register" element={<RegisterForm />} />
+              <Route path="/login" element={<LoginForm />} />
+              <Route path="/Cart" element={<Cart />} />
+              <Route path="/ContactUs" element={<ContactUs />} />
+              <Route path="/category/:categoryId" element={<ProductList />} />
+              <Route path="/profile" element={<Profile />} />
+              
+              {/* Payment route with Stripe */}
+              <Route 
+                path="/Payment" 
+                element={
+                  <Elements stripe={stripePromise}>
+                    <Payment />
+                  </Elements>
+                } 
+              />
+              
+              {/* Product details route */}
+              <Route 
+                path="/product/:id" 
+                element={<ProductList showDetails={true} />} 
+              />
+              
+              {/* Seller Dashboard route with protection */}
+              <Route 
+                path="/SellerDashboard" 
+                element={
+                  <SellerRoute>
+                    <SellerDashboard />
+                  </SellerRoute>
+                } 
+              />
+            </Routes>
+            <Footer />
+          </Router>
+        </CartProvider>
+      </AuthProvider>
     </Provider>
   );
 }

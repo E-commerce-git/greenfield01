@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux';
 import { loginStart, loginSuccess, loginFailure } from '../../store/slices/authSlice';
-
 import axios from 'axios';
 
 const LoginForm = () => {
@@ -25,22 +24,31 @@ const LoginForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    dispatch(loginStart());
+    
     try {
       const response = await axios.post('http://localhost:3000/api/user/login', formData);
       const { token, user } = response.data;
       
-      // Make sure user object includes id
+      // Store auth data in localStorage
       localStorage.setItem('token', token);
       localStorage.setItem('userRole', user.role);
       localStorage.setItem('userId', user.id);
+
+      // Configure axios defaults for future requests
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       
       dispatch(loginSuccess({ token, user }));
       
+      // Navigate based on role
       if (user.role === 'seller') {
         navigate('/seller/dashboard');
+      } else {
+        navigate('/'); // or wherever you want users to go
       }
     } catch (error) {
       console.error('Login error:', error);
+      dispatch(loginFailure(error.response?.data?.message || 'Login failed'));
     }
   };
 
@@ -54,8 +62,6 @@ const LoginForm = () => {
             alt="Product"
             className="w-full max-w-md rounded-lg shadow-lg mb-6"
           />
-        
-          
         </div>
 
         {/* Login Form Section */}
@@ -127,12 +133,13 @@ const LoginForm = () => {
             </form>
             <div className="text-center mt-4">
               <p className="text-sm text-gray-600">
-                Already have an account?{' '}
+                Don't have an account?{' '}
                 <button 
                   type="button" 
                   className="font-medium text-amber-600 hover:text-amber-500"
+                  onClick={() => navigate('/register')}
                 >
-                  Log in
+                  Sign up
                 </button>
               </p>
             </div>
