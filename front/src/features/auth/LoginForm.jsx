@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux';
 import { loginStart, loginSuccess, loginFailure } from '../../store/slices/authSlice';
+import justImage from "../../assets/SignImg.png"
 import axios from 'axios';
 
 const LoginForm = () => {
@@ -54,14 +55,14 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center px-4 sm:px-6 lg:px-8">
-      <div className="flex w-full max-w-5xl shadow-lg rounded-lg overflow-hidden">
-        {/* Image Column */}
-        <div className="hidden lg:block lg:w-1/2">
-          <img
-            src="/assets/login-image.jpg"
-            alt="Login"
-            className="w-full h-full object-cover"
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="flex w-full max-w-5xl gap-8">
+        {/* Product Image Section */}
+        <div className="w-1/2 flex flex-col items-center justify-center bg-gray-100 p-8 rounded-lg">
+          <img 
+            src={justImage} 
+            alt="Product"
+            className="w-full max-w-md rounded-lg shadow-lg mb-6"
           />
         </div>
 
@@ -101,26 +102,45 @@ const LoginForm = () => {
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-4">
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  className="w-full px-3 py-2 border-b border-gray-300 focus:border-[#db4444] outline-none transition-colors"
-                  placeholder="Email or Phone Number"
-                  value={formData.email}
-                  onChange={handleChange}
-                />
-                <input
-                  id="password"
-                  name="password"
-                  type="password"   
-                  required
-                  className="w-full px-3 py-2 border-b border-gray-300 focus:border-[#db4444] outline-none transition-colors"
-                  placeholder="Password"
-                  value={formData.password}
-                  onChange={handleChange}
-                />
+                <div>
+                  <label htmlFor="email" className="sr-only">Email address</label>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    required
+                    className="block w-full px-3 py-2 bg-gray-50 text-gray-900 border-b border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-0 sm:text-sm"
+                    placeholder="Email address"
+                    value={formData.email}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="password" className="sr-only">Password</label>
+                  <input
+                    id="password"
+                    name="password"
+                    type="password"   
+                    required
+                    className="block w-full px-3 py-2 bg-gray-50 text-gray-900 border-b border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-0 sm:text-sm"
+                    placeholder="Password"
+                    value={formData.password}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="role" className="sr-only">Select Role</label>
+                  <select
+                    id="role"
+                    name="role"
+                    value={formData.role}
+                    onChange={handleChange}
+                    className="block w-full px-3 py-2 bg-gray-0 text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-[#DC2626]  sm:text-sm"
+                  >
+                    <option value="user">Customer</option>
+                    <option value="seller">Seller</option>
+                  </select>
+                </div>
               </div>
 
               {error && (
@@ -133,22 +153,24 @@ const LoginForm = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-[#db4444] text-white px-4 py-2.5 rounded hover:bg-[#db4444]/90 transition-colors"
+                  className="w-1/2 mx-auto flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[#DB4444] hover:bg-[#DC2626] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500"
                 >
                   {loading ? 'Signing in...' : `Sign in as ${formData.role === 'user' ? 'Customer' : 'Seller'}`}
                 </button>
-                <div className="text-center">
-                  <span className="text-sm text-gray-600">Don't have an account?</span>
-                  <button 
-                    type="button" 
-                    className="text-[#db4444] text-sm hover:underline ml-1"
-                    onClick={() => navigate('/register')}
-                  >
-                    Sign up
-                  </button>
-                </div>
               </div>
             </form>
+            <div className="text-center mt-4">
+              <p className="text-sm text-gray-600">
+                Don't have an account?{' '}
+                <button 
+                  type="button" 
+                  className="font-medium text-[#DB4444] hover:text-[#DC2626]"
+                  onClick={() => navigate('/register')}
+                >
+                  Sign up
+                </button>
+              </p>
+            </div>
           </div>
         </div>
       </div>

@@ -3,6 +3,7 @@ import React from "react";
 import Person1 from "../assets/56A9D19F-D5AC-49E1-AD3C-60B58F5BE2B6.jpg";
 import Person2 from "../assets/4D902F64-0F61-4AFD-B3F0-D564089B55E1.jpg";
 import Person3 from "../assets/19848403-7CCC-4287-8F24-8E2B388CC30D.jpg";
+import Person4 from "../assets/mee.jpg"
 import Aboutimg from "../assets/SignImg.png";
 
 export default function About() {
@@ -42,6 +43,15 @@ export default function About() {
                 className="w-48 h-48 object-cover rounded-full mb-4"
               />
               <h3 className="text-lg font-bold text-gray-800 mb-2">John Doe</h3>
+              <p className="text-lg text-gray-600">Chief Strategy Officer</p>
+            </div>
+            <div className="w-full md:w-1/2 lg:w-1/3 xl:w-1/4 p-4">
+              <img
+                src={Person4}
+                alt="Team Member 1"
+                className="w-48 h-48 object-cover rounded-full mb-4"
+              />
+              <h3 className="text-lg font-bold text-gray-800 mb-2">Mehdi Idoudi</h3>
               <p className="text-lg text-gray-600">Founder & CEO</p>
             </div>
             <div className="w-full md:w-1/2 lg:w-1/3 xl:w-1/4 p-4">
