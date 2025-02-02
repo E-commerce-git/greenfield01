@@ -18,6 +18,7 @@ const database=require("../database/connection")
 const userroutes=require("../routes/user.js")
 const productRoutes=require("../routes/product.js")
 const categoryRoutes = require("../routes/category");
+const reviewRoutes = require("../routes/reviews.js");
 
 
 app.use(express.json());
@@ -31,6 +32,7 @@ app.use("/api/product/",productRoutes)
 app.use("/api/category/", categoryRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use("/api/contact", contactRoutes);
+app.use("/api/reviews", reviewRoutes);
 // make the server listen to requests
 app.listen(PORT, () => {
   console.log(`Server running at: http://localhost:${PORT}/`);

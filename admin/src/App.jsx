@@ -7,6 +7,7 @@ import UserProfile from "./components/UserProfile";
 import UserList from "./components/UserList";
 import ProductList from "./components/ProductList";
 import CategoryList from "./components/CategoryList";
+import OrderList from "./components/OrderList";
 
 const App = () => {
   return (
@@ -61,6 +62,14 @@ const App = () => {
           element={
             <PrivateRoute>
               <CategoryList />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/orders"
+          element={
+            <PrivateRoute>
+              <OrderList />
             </PrivateRoute>
           }
         />

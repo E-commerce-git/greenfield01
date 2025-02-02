@@ -100,4 +100,15 @@ await handleTotal(productId,0,OrderId,cart.quantity,t)
   }
 };
 
-module.exports = { addToCart,insertIntoOrderProduct, removeFromCart, updateCart };
+const getAllProductOrders = async (req, res) => {
+  try {
+    const allProductOrders = await orderProduct.findAll();
+    return res.status(200).json({ message: "All product orders retrieved", data: allProductOrders });
+  } catch (err) {
+    console.error("Error retrieving product orders:", err);
+    return res.status(500).json({ error: "Failed to retrieve product orders" });
+  }
+};
+
+
+module.exports = { addToCart,insertIntoOrderProduct, removeFromCart, updateCart,getAllProductOrders };

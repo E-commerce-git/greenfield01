@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Heart } from 'lucide-react';
-import axios from 'axios';
+import axios from 'axios';  
 import { Link, useNavigate } from 'react-router-dom';
 
 export default function Navbar() {
@@ -13,18 +13,31 @@ export default function Navbar() {
 
   useEffect(() => {
     const checkAuth = async () => {
+      const token = localStorage.getItem('token');
+      
+      // Skip the API call if there's no token
+      if (!token) {
+        setIsAuthenticated(false)
+        setUser(null)
+        return
+      }
+
       try {
         const {data} = await axios.get('http://localhost:3000/api/user/check-auth', {
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
+            'Authorization': `Bearer ${token}`
           }
         });
     
-        console.log('Auth response:', data); // Debug log
         setIsAuthenticated(data.isAuthenticated);
         setUser(data.user);
       } catch (error) {
         console.error('Auth check failed:', error);
+        // Clear auth state on error
+        setIsAuthenticated(false);
+        setUser(null);
+        // Optionally clear token if it's invalid
+        localStorage.removeItem('token');
       }
     };
     
