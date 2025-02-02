@@ -22,6 +22,7 @@ export default function ContactUS() {
     try {
       const response = await axios.post("http://localhost:3000/api/contact/send", formData);
 
+     
       if (response.data.success) {
         alert("Message sent successfully!");
         setFormData({ name: "", email: "", phone: "", message: "" }); // Clear form

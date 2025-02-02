@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../store/redux/useAuth";
-
+import apis from "../../config/api";
+import axios from "axios";
 const ProductList = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -23,18 +24,13 @@ const ProductList = () => {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:3000/api/product/products", {
+  
+      const response = await axios.get(apis.productsApi.getAllProducts, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-
-      if (response.ok) {
-        const data = await response.json();
-        setProducts(data.products);
-      } else {
-        setError("Failed to fetch products");
-      }
+      setProducts(response.data.products);
     } catch (error) {
       setError("Error fetching products");
     } finally {
@@ -44,14 +40,14 @@ const ProductList = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch("http://localhost:3000/api/category/categories", {
+      const response = await axios.get(apis.apisCategory.getAll, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-
-      if (response.ok) {
-        const data = await response.json();
+  
+      if (response.status === 200) {
+        const data = response.data;
         setCategories(data.categories);
       }
     } catch (error) {
@@ -66,22 +62,20 @@ const ProductList = () => {
 
   const handleDelete = async () => {
     if (!selectedProduct) return;
-
+  
     try {
-      const response = await fetch(`http://localhost:3000/api/product/${selectedProduct.id}`, {
-        method: "DELETE",
+      const response = await axios.delete(`${apis.productsApi.productById}${selectedProduct.id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-
-      if (response.ok) {
+  
+      if (response.status === 200) {
         setProducts(products.filter(p => p.id !== selectedProduct.id));
         setIsDeleteModalOpen(false);
         setSelectedProduct(null);
       } else {
-        const data = await response.json();
-        setError(data.message || "Failed to delete product");
+        setError(response.data.message || "Failed to delete product");
       }
     } catch (error) {
       setError("Error deleting product");

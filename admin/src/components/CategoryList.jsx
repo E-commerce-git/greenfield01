@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../store/redux/useAuth";
-
+import apis from "../../config/api";
+import axios from "axios";
 const CategoryList = () => {
   const [categories, setCategories] = useState([]);
   const [categoryProducts, setCategoryProducts] = useState({});
@@ -21,24 +22,25 @@ const CategoryList = () => {
   const fetchCategories = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:3000/api/category/categories", {
+  
+      const response = await axios.get(apis.apisCategory.getAll, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
-
-      if (response.ok) {
-        const data = await response.json();
+  
+      if (response.status === 200) {
+        const data = response.data;
         setCategories(data.categories);
-        // Fetch products for each category
+
         data.categories.forEach(category => {
           fetchProductsByCategory(category.id);
         });
       } else {
-        setError("Failed to fetch categories");
+        setError('Failed to fetch categories');
       }
     } catch (error) {
-      setError("Error fetching categories");
+      setError('Error fetching categories');
     } finally {
       setLoading(false);
     }
@@ -46,14 +48,14 @@ const CategoryList = () => {
 
   const fetchProductsByCategory = async (categoryId) => {
     try {
-      const response = await fetch(`http://localhost:3000/api/category/${categoryId}/products`, {
+      const response = await axios.get(`${apis.apisCategory.getProductByCategory}${categoryId}/products`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-
-      if (response.ok) {
-        const data = await response.json();
+  
+      if (response.status === 200) {
+        const data = response.data;
         setCategoryProducts(prev => ({
           ...prev,
           [categoryId]: data.products
@@ -71,25 +73,23 @@ const CategoryList = () => {
 
   const handleDelete = async () => {
     if (!selectedCategory) return;
-
+  
     try {
-      const response = await fetch(`http://localhost:3000/api/category/delete/${selectedCategory.id}`, {
-        method: "DELETE",
+      const response = await axios.delete(`${apis.apisCategory.handelDelete}${selectedCategory.id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-
-      if (response.ok) {
+  
+      if (response.status === 200) {
         setCategories(categories.filter(c => c.id !== selectedCategory.id));
         setIsDeleteModalOpen(false);
         setSelectedCategory(null);
       } else {
-        const data = await response.json();
-        setError(data.message || "Failed to delete category");
+        setError(response.data.message || "Failed to delete category");
       }
     } catch (error) {
-      setError("Error deleting category");
+      setError(error.response?.data?.message || "Error deleting category");
     }
   };
 
