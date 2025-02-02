@@ -3,14 +3,13 @@ import { useSelector } from 'react-redux';
 import { Heart } from 'lucide-react';
 import axios from 'axios';  
 import { Link, useNavigate } from 'react-router-dom';
-import { useWishlist } from '../pages/wishlist/WishlistContext';
 
 export default function Navbar() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
   const [showUserInfo, setShowUserInfo] = useState(false);
 
-  const { wishlistItems } = useWishlist();
+  const wishlistItems = useSelector((state) => state.wishlist.items);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -18,9 +17,9 @@ export default function Navbar() {
       
       // Skip the API call if there's no token
       if (!token) {
-        setIsAuthenticated(false);
-        setUser(null);
-        return;
+        setIsAuthenticated(false)
+        setUser(null)
+        return
       }
 
       try {
@@ -42,21 +41,13 @@ export default function Navbar() {
       }
     };
     
-  //   checkAuth();
-  // }, []);
+    checkAuth();
+  }, []);
 
   // Debug logs
   // console.log('Auth state:', { isAuthenticated, user, showUserInfo });
 
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState('');
-
-  const handleSearch = (e) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/search/${searchQuery}`);
-    }
-  };
 
   return (
     <nav className="bg-white shadow-lg">
@@ -75,31 +66,28 @@ export default function Navbar() {
           </div>
 
           {/* Search Bar */}
-          <form onSubmit={handleSearch} className="flex items-center">
-            <input
-              type="text"
-              placeholder="Search products..."
-              className="px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-r-md hover:bg-blue-700 transition duration-200">
-              Search
-            </button>
-          </form>
+          <div className="flex items-center">
+  <input
+    type="text"
+    placeholder="Search products..."
+    className="px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-[#DB4444] focus:border-transparent"
+  />
+  <button className="px-4 py-2 bg-[#DB4444]  text-white rounded-r-md hover:bg-[#DC2626] transition duration-200">
+    Search
+  </button>
+</div>
+
 
           {/* User Actions */}
           <div className="flex items-center space-x-4">
-            {/* Wishlist Icon */}
+            {/* Heart Icon (Favoriting) */}
             <div className="relative">
-              <Link to="/wishlist" className="text-gray-800 hover:text-blue-600 transition duration-200">
-                <Heart className="w-6 h-6" />
-                {wishlistItems.length > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-[#db4444] text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
-                    {wishlistItems.length}
-                  </span>
-                )}
-              </Link>
+              <Heart className="w-6 h-6" />
+              {wishlistItems.length > 0 && (
+                <span className="absolute -top-2 -right-2 bg-[#db4444] text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+                  {wishlistItems.length}
+                </span>
+              )}
             </div>
 
             {/* Shopping Cart Icon */}
@@ -119,8 +107,12 @@ export default function Navbar() {
               <Link 
                 to="/profile" 
                 className={`text-gray-800 hover:text-red-600 transition duration-200 ${isAuthenticated ? '!text-red-500' : ''}`}
-                onMouseEnter={() => setShowUserInfo(true)}
-                onMouseLeave={() => setShowUserInfo(false)}
+                onMouseEnter={() => {
+                  setShowUserInfo(true);
+                }}
+                onMouseLeave={() => {
+                  setShowUserInfo(false);
+                }}
               >
                 <div className="flex flex-col items-center">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

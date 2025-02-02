@@ -4,6 +4,7 @@ import { addToCart } from "../functions/addToCard";
 import { useCart } from '../pages/cart/CartContext'; // Import useCart
 import { useAuth } from '../context/AuthContext'; // Make sure you have this context
 import axios from 'axios';
+import { Heart } from 'lucide-react';
 
 export default function ProductCard({ product, onDelete }) {
   const { updateCart } = useCart(); // Get updateCart from context
@@ -42,7 +43,7 @@ export default function ProductCard({ product, onDelete }) {
       {/* Favorite Button */}
       <button 
         className="absolute top-3 right-3 p-2 bg-white rounded-full shadow hover:bg-gray-100 transition-colors duration-200"
-        onClick={handleFavoriteClick}
+        // onClick={handleFavoriteClick}
       >
         <Heart 
           className={`w-5 h-5 ${isFavorite ? 'text-red-500 fill-current' : 'text-gray-800'}`} 
