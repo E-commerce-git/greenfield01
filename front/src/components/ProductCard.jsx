@@ -1,26 +1,44 @@
-// src/components/ProductCard.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { addToCart } from "../functions/addToCard";
-import { useCart } from '../pages/cart/CartContext'; // Import useCart
-import { useAuth } from '../context/AuthContext'; // Make sure you have this context
-import { useWishlist } from '../pages/wishlist/WishlistContext'; // Add this import
+import { useCart } from '../pages/cart/CartContext';
+import { useAuth } from '../context/AuthContext';
+import { useWishlist } from '../pages/wishlist/WishlistContext';
 import axios from 'axios';
 import { Heart } from 'lucide-react';
 
-export default function ProductCard({ product, onDelete }) {
-  const { updateCart } = useCart(); // Get updateCart from context
-  const { user } = useAuth(); // Get the user from auth context
-  const { wishlistItems, addToWishlist, removeFromWishlist } = useWishlist(); // Use wishlist context
-  const isFavorite = wishlistItems.some(item => item.id === product.id); // Changed to check object equality
+export default function ProductCard({ product, onDelete, onAddReview }) {
+  const { updateCart } = useCart();
+  const { user } = useAuth();
+  const { wishlistItems, addToWishlist, removeFromWishlist } = useWishlist();
+  const isFavorite = wishlistItems.some(item => item.id === product.id);
   const [hoverRating, setHoverRating] = useState(0);
-  const [selectedRating, setSelectedRating] = useState(0);
+  const [selectedRating, setSelectedRating] = useState(product.userRating || 0);
+  const [reviews, setReviews] = useState([]);
+  const [reviewCount, setReviewCount] = useState(product.reviewCount || 0); // Add reviewCount state
+
+  // Fetch reviews for the product
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3000/api/reviews/product/${product.id}`);
+        if (response.status === 200) {
+          setReviews(response.data);
+          setReviewCount(response.data.length); // Update reviewCount based on fetched reviews
+        }
+      } catch (error) {
+        console.error('Error fetching reviews:', error);
+      }
+    };
+
+    fetchReviews();
+  }, [product.id]);
 
   const handleAddToCart = () => {
     addToCart(product, updateCart);
   };
 
   const handleDelete = async (e) => {
-    e.stopPropagation(); // Prevent navigation when clicking delete
+    e.stopPropagation();
     try {
       const token = localStorage.getItem('token');
       await axios.delete(`http://localhost:3000/api/product/${product.id}`, {
@@ -36,41 +54,55 @@ export default function ProductCard({ product, onDelete }) {
     }
   };
 
-  // Handle favorite click
   const handleFavoriteClick = (e) => {
     e.stopPropagation();
     if (isFavorite) {
-      removeFromWishlist(product); // Pass the product object instead of just ID
+      removeFromWishlist(product);
     } else {
-      addToWishlist(product); // Pass the product object instead of just ID
+      addToWishlist(product);
     }
   };
 
   const handleRatingClick = async (rating) => {
-    setSelectedRating(rating);
     try {
-      // Example: Submit rating to backend
-      await fetch('http://localhost:3000/api/reviews/add', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({
-          productId: product.id,
-          rating,
-          comment: '' // Optional: Add a comment field if needed
-        })
-      });
-      // Optionally refresh the product data or show a success message
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Please login to rate products');
+        return;
+      }
+      
+      await axios.post(`http://localhost:3000/api/reviews/add`, 
+        { productId: product.id, rating, comment: '' },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+      
+      // Update the product's average rating
+      product.averageRating = ((product.averageRating * reviewCount) + rating) / (reviewCount + 1);
+      setReviewCount(reviewCount + 1); // Increment reviewCount
+      setSelectedRating(rating);
+      
+      // If onAddReview is provided, call it
+      if (onAddReview) {
+        onAddReview(product.id, rating, '');
+      }
+
+      // Refresh reviews after submission
+      const response = await axios.get(`http://localhost:3000/api/reviews/product/${product.id}`);
+      if (response.status === 200) {
+        setReviews(response.data);
+      }
     } catch (error) {
       console.error('Error submitting rating:', error);
+      alert('Failed to submit rating. Please try again.');
     }
   };
 
-  // Ensure product data exists before rendering
   if (!product) {
-    return null; // Or return a placeholder/loading state
+    return null;
   }
 
   return (
@@ -85,7 +117,7 @@ export default function ProductCard({ product, onDelete }) {
       {/* Favorite Button */}
       <button 
         className="absolute top-3 right-3 p-2 bg-white rounded-full shadow hover:bg-gray-100 transition-colors duration-200"
-        onClick={handleFavoriteClick} // Add click handler
+        onClick={handleFavoriteClick}
       >
         <Heart 
           className={`w-5 h-5 ${isFavorite ? 'text-red-500 fill-current' : 'text-gray-800'}`} 
@@ -136,10 +168,9 @@ export default function ProductCard({ product, onDelete }) {
               <svg
                 className={`w-5 h-5 ${
                   index < (hoverRating || selectedRating || product.averageRating || 0)
-                    ? 'text-[#FFAD33]'
+                    ? 'text-[#FFAD33] fill-current'
                     : 'text-gray-300'
                 }`}
-                fill="currentColor"
                 viewBox="0 0 20 20"
               >
                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
@@ -147,7 +178,36 @@ export default function ProductCard({ product, onDelete }) {
             </button>
           ))}
         </div>
-        <span className="text-gray-500 text-sm">({product.reviewCount || 0} reviews)</span>
+        <span className="text-gray-500 text-sm">({reviewCount} reviews)</span> {/* Use reviewCount state */}
+      </div>
+
+      {/* Reviews Section */}
+      <div className="mt-4">
+        <h4 className="font-medium mb-2">Reviews</h4>
+        {reviews.length > 0 ? (
+          reviews.map((review) => (
+            <div key={review.id} className="border-b py-2">
+              <div className="flex items-center mb-1">
+                <div className="flex">
+                  {[...Array(5)].map((_, index) => (
+                    <span
+                      key={index}
+                      className={`text-yellow-400 ${index < review.rating ? 'fill-current' : 'text-gray-300'}`}
+                    >
+                      ★
+                    </span>
+                  ))}
+                </div>
+                <span className="ml-2 text-sm text-gray-500">
+                  by {review.User?.userName || 'Anonymous'}
+                </span>
+              </div>
+              <p className="text-gray-700 text-sm">{review.comment}</p>
+            </div>
+          ))
+        ) : (
+          <p className="text-gray-500 text-sm">No reviews yet.</p>
+        )}
       </div>
 
       {/* Additional Details */}
@@ -164,7 +224,7 @@ export default function ProductCard({ product, onDelete }) {
       {user?.role === 'seller' && (
         <button
           onClick={handleDelete}
-          className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition-colors"
+          className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition-colors mt-2"
         >
           Delete
         </button>

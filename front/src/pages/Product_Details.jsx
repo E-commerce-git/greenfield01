@@ -5,11 +5,12 @@ import { Heart, Minus, Plus, Eye } from "lucide-react"
 import { useDispatch, useSelector } from 'react-redux'
 import { addToWishlist, removeFromWishlist } from '../redux/wishlistSlice'
 import { useParams } from 'react-router-dom'
+import { useCart } from '../pages/cart/CartContext'
+import { addToCart } from '../functions/addToCard.jsx'
 import ReviewForm from '../components/ReviewForm'
+import axios from 'axios'
 
 export default function ProductDetail({ product, productList }) {
-  // Remove the debug useEffect temporarily
-  
   const [selectedImage, setSelectedImage] = useState(0)
   const [quantity, setQuantity] = useState(1)
   const [selectedSize, setSelectedSize] = useState("M")
@@ -22,13 +23,42 @@ export default function ProductDetail({ product, productList }) {
   
   const dispatch = useDispatch()
   const wishlist = useSelector((state) => state.wishlist.items)
-  
-  const handleRatingClick = (rating) => {
-    setUserRating(rating)
-    // Here you would typically make an API call to save the rating
-    console.log(`Rating submitted: ${rating}`)
-  }
-  // Memoize these values to prevent unnecessary re-renders
+  const { updateCart } = useCart()
+
+  const handleRatingClick = async (rating) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Please login to rate products');
+        return;
+      }
+      
+      const response = await axios.post(
+        `http://localhost:3000/api/reviews/add`, 
+        { productId: id, rating, comment: '' },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+      
+      if (response.status === 201) {
+        setUserRating(rating);
+        // Update the product's rating in the UI
+        product.rating = ((product.rating * product.reviews) + rating) / (product.reviews + 1);
+        product.reviews += 1;
+      }
+    } catch (error) {
+      console.error('Error submitting rating:', error);
+      if (error.response) {
+        alert(error.response.data.message || 'Failed to submit rating');
+      } else {
+        alert('Network error. Please try again.');
+      }
+    }
+  };
+
   const isInWishlist = useMemo(() => {
     return wishlist.some((item) => item.id === product?.id)
   }, [wishlist, product?.id])
@@ -38,12 +68,11 @@ export default function ProductDetail({ product, productList }) {
       ?.filter(item => 
         item.id !== product?.id && 
         item.category === product?.category &&
-        !failedImages.has(item.id) && // Only include products whose images haven't failed
-        (item.images?.[0] || item.imageUrl) // Only include products that have at least one image
+        !failedImages.has(item.id) &&
+        (item.images?.[0] || item.imageUrl)
       )
       .slice(0, 4)
-  }, [productList, product?.id, product?.category, failedImages]) // Add failedImages to dependencies
-  
+  }, [productList, product?.id, product?.category, failedImages])
 
   const handleWishlist = useCallback(() => {
     if (isInWishlist) {
@@ -53,12 +82,10 @@ export default function ProductDetail({ product, productList }) {
     }
   }, [isInWishlist, product, dispatch])
 
-  // Add a default placeholder as base64 or URL
-  const placeholderImage = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiNFNUU3RUIiLz48cGF0aCBkPSJNMTAwIDg4Ljg4ODlDMTAzLjAzNyA4OC44ODg5IDEwNS41IDg2LjQyNTggMTA1LjUgODMuMzg4OUMxMDUuNSA4MC4zNTIgMTAzLjAzNyA3Ny44ODg5IDEwMCA3Ny44ODg5Qzk2Ljk2MzEgNzcuODg4OSA5NC41IDgwLjM1MiA5NC41IDgzLjM4ODlDOTQuNSA4Ni40MjU4IDk2Ljk2MzEgODguODg4OSAxMDAgODguODg4OVoiIGZpbGw9IiM5Q0EzQUYiLz48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTg1LjUgNjZIODVWNjUuNUM4NSA2NC4xMTkzIDg2LjExOTMgNjMgODcuNSA2M0gxMTIuNUMxMTMuODgxIDYzIDExNSA2NC4xMTkzIDExNSA2NS41VjY2SDExNC41SDg1LjVaTTExNSA2OEg4NVYxMzQuNUM4NSAxMzUuODgxIDg2LjExOTMgMTM3IDg3LjUgMTM3SDExMi41QzExMy44ODEgMTM3IDExNSAxMzUuODgxIDExNSAxMzQuNVY2OFpNODcuNSA2MUM4NC45MTAxIDYxIDgzIDYyLjkxMDEgODMgNjUuNVYxMzQuNUM4MyAxMzcuMDkgODQuOTEwMSAxMzkgODcuNSAxMzlIMTEyLjVDMTE1LjA5IDEzOSAxMTcgMTM3LjA5IDExNyAxMzQuNVY2NS41QzExNyA2Mi45MTAxIDExNS4wOSA2MSAxMTIuNSA2MUg4Ny41WiIgZmlsbD0iIzlDQTNBRiIvPjwvc3ZnPg==" 
-  
+  const placeholderImage = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiNFNUU3RUIiLz48cGF0aCBkPSJNMTAwIDg4Ljg4ODlDMTAzLjAzNyA4OC44ODg5IDEwNS41IDg2LjQyNTggMTA1LjUgODMuMzg4OUMxMDUuNSA4MC4zNTIgMTAzLjAzNyA3Ny44ODg5IDEwMCA3Ny44ODg5Qzk2Ljk2MzEgNzcuODg4OSA5NC41IDgwLjM1MiA5NC41IDgzLjM4ODlDOTQuNSA4Ni40MjU4IDk2Ljk2MzEgODguODg4OSAxMDAgODguODg4OVoiIGZpbGw9IiM5Q0EzQUYiLz48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTg1LjUgNjZIODVWNjUuNUM4NSA2NC4xMTkzIDg2LjExOTMgNjMgODcuNSA2M0gxMTIuNUMxMTMuODgxIDYzIDExNSA2NC4xMTkzIDExNSA2NS41VjY2SDExNC41SDg1LjVaTTExNSA2OEg4NVYxMzQuNUM4NSAxMzUuODgxIDg2LjExOTMgMTM3IDg3LjUgMTM3SDExMi41QzExMy44ODEgMTM3IDExNSAxMzUuODgxIDExNSAxMzQuNVY2OFpNODcuNSA2MUM4NC45MTAxIDYxIDgzIDYyLjkxMDEgODMgNjUuNVYxMzQuNUM4MyAxMzcuMDkgODQuOTEwMSAxMzkgODcuNSAxMzlIMTEyLjVDMTE1LjA5IDEzOSAxMTcgMTM3LjA5IDExNyAxMzQuNVY2NS41QzExNyA2Mi45MTAxIDExNS4wOSA2MSAxMTIuNSA2MUg4Ny41WiIgZmlsbD0iIzlDQTNBRiIvPjwvc3ZnPg=="
+
   const handleImageError = useCallback((productId) => {
     setFailedImages(prev => {
-      // Only update if the ID isn't already in the set
       if (prev.has(productId)) return prev;
       const newSet = new Set(prev)
       newSet.add(productId)
@@ -66,15 +93,30 @@ export default function ProductDetail({ product, productList }) {
     })
   }, [])
 
+  const handleAddToCart = () => {
+    const productWithDetails = {
+      ...product,
+      quantity,
+      selectedSize,
+      selectedColor,
+    };
+    addToCart(productWithDetails, quantity, updateCart);
+    alert(`${quantity} ${product.name}(s) added to cart!`);
+  };
+
   const fetchReviews = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/api/reviews/product/${id}`);
-      if (response.ok) {
-        const data = await response.json();
-        setReviews(data);
+      const response = await axios.get(`http://localhost:3000/api/reviews/product/${id}`);
+      if (response.status === 200) {
+        setReviews(response.data);
       }
     } catch (error) {
       console.error('Error fetching reviews:', error);
+      if (error.response) {
+        alert(error.response.data.message || 'Failed to fetch reviews');
+      } else {
+        alert('Network error. Please try again.');
+      }
     }
   };
 
@@ -82,9 +124,22 @@ export default function ProductDetail({ product, productList }) {
     fetchReviews();
   }, [id]);
 
-  const handleReviewSubmit = (productId, rating, comment) => {
-    addReview(productId, rating, comment);
-    fetchReviews(); // Refresh the reviews display
+  const handleReviewSubmit = async (productId, rating, comment) => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.post(
+        `http://localhost:3000/api/reviews/add`, 
+        { productId, rating, comment },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+      fetchReviews(); // Refresh reviews after submission
+    } catch (error) {
+      console.error('Error submitting review:', error);
+    }
   };
 
   return (
@@ -105,7 +160,7 @@ export default function ProductDetail({ product, productList }) {
 
         {/* Product Info */}
         <div className="space-y-6">
-        <div className="space-y-2">
+          <div className="space-y-2">
             <h1 className="text-2xl font-semibold">{product?.name}</h1>
             <div className="flex items-center space-x-2">
               <div className="flex text-yellow-400">
@@ -131,11 +186,6 @@ export default function ProductDetail({ product, productList }) {
             </div>
             <p className="text-2xl font-semibold">${product?.price}</p>
           </div>
-
-
-          <p className="text-gray-600">
-            
-          </p>
 
           {/* Colors */}
           <div className="space-y-2">
@@ -185,7 +235,10 @@ export default function ProductDetail({ product, productList }) {
                 <Plus className="w-4 h-4" />
               </button>
             </div>
-            <button className="px-8 py-2 bg-[#db4444] text-white rounded hover:bg-[#db4444]/90 transition-colors">
+            <button 
+              onClick={handleAddToCart}
+              className="px-8 py-2 bg-[#db4444] text-white rounded hover:bg-[#db4444]/90 transition-colors"
+            >
               Add to Cart
             </button>
             <button 
@@ -297,4 +350,3 @@ export default function ProductDetail({ product, productList }) {
     </div>
   )
 }
-

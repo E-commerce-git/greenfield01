@@ -1,5 +1,5 @@
+const config = require('../database/config')
 const nodemailer = require("nodemailer");
-const config = "../database/config.js";
 
 const sendEmail = async (req, res) => {
   const { name, email, phone, message } = req.body;
@@ -12,8 +12,8 @@ const sendEmail = async (req, res) => {
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: config.EMAIL_USER,
-        pass: config.EMAIL_PASS,
+        user:config.development.EMAIL_USER,
+        pass: config.development.EMAIL_PASS,
       },
     });
 
@@ -25,7 +25,7 @@ const sendEmail = async (req, res) => {
     };
 
     await transporter.sendMail(mailOptions);
-    res.status(200).json({ message: "Email sent successfully" });
+    res.status(200).json({ message: "Email sent successfully",success:true },);
   } catch (error) {
     console.error("Email error:", error);
     res.status(500).json({ error: "Failed to send email" });

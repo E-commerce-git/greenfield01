@@ -9,11 +9,20 @@ export default function ReviewForm({ productId, onSubmit }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      onSubmit(productId, rating, comment);
+      if (!user) {
+        alert('Please login to submit a review');
+        return;
+      }
+      await onSubmit(productId, rating, comment);
       setRating(0);
       setComment('');
     } catch (error) {
       console.error('Error submitting review:', error);
+      if (error.response) {
+        alert(error.response.data.message || 'Failed to submit review');
+      } else {
+        alert('Network error. Please try again.');
+      }
     }
   };
 
@@ -25,7 +34,9 @@ export default function ReviewForm({ productId, onSubmit }) {
             type="button"
             key={index}
             onClick={() => setRating(index + 1)}
-            className={`text-2xl ${index < rating ? 'text-yellow-400' : 'text-gray-300'}`}
+            className={`text-2xl ${
+              index < rating ? 'text-[#FFAD33] fill-current' : 'text-gray-300'
+            }`}
           >
             ★
           </button>
@@ -40,7 +51,7 @@ export default function ReviewForm({ productId, onSubmit }) {
       />
       <button
         type="submit"
-        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        className="bg-[#DB4444] text-white px-4 py-2 rounded hover:bg-[#DB4444]/90"
         disabled={!user}
       >
         {user ? 'Submit Review' : 'Login to Review'}
