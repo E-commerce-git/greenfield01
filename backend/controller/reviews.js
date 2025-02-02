@@ -1,5 +1,5 @@
 const db = require('../database/connection');
-const Review = db.Review;  // Import Review model from db connection
+const Review = db.Review;  
 const Product = require('../database/model/product');
 const User = require('../database/model/user');
 

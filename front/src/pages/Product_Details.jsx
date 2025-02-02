@@ -9,6 +9,7 @@ import { useCart } from '../pages/cart/CartContext'
 import { addToCart } from '../functions/addToCard.jsx'
 import ReviewForm from '../components/ReviewForm'
 import axios from 'axios'
+import development from "../config/default.js"
 
 export default function ProductDetail({ product, productList }) {
   const [selectedImage, setSelectedImage] = useState(0)
@@ -34,7 +35,7 @@ export default function ProductDetail({ product, productList }) {
       }
       
       const response = await axios.post(
-        `http://localhost:3000/api/reviews/add`, 
+        development.VITE_REVIEW, 
         { productId: id, rating, comment: '' },
         {
           headers: {
@@ -106,7 +107,7 @@ export default function ProductDetail({ product, productList }) {
 
   const fetchReviews = async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/reviews/product/${id}`);
+      const response = await axios.get(`${development.VITE_RP}${id}`);
       if (response.status === 200) {
         setReviews(response.data);
       }
@@ -128,7 +129,7 @@ export default function ProductDetail({ product, productList }) {
     try {
       const token = localStorage.getItem('token');
       await axios.post(
-        `http://localhost:3000/api/reviews/add`, 
+        `${development.VITE_REVIEW}`, 
         { productId, rating, comment },
         {
           headers: {

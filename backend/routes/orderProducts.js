@@ -1,16 +1,17 @@
 const {addToCart,insertIntoOrderProduct,removeFromCart,updateCart,getAllProductOrders}= require("../controller/orderProduct.js")
 const orderProductRouter = require("express").Router()
+const dev =require("../database/config.js")
 
 const authenticateJWT=require("../auth/auth.js")
-orderProductRouter.post("/add-to-cart", addToCart)
-orderProductRouter.delete("/remove-from-cart/:OrderId/:productId", removeFromCart) 
+orderProductRouter.post(dev.development.ADD_TO_CART, addToCart)
+orderProductRouter.delete(dev.development.REMOVE_FROM_CART, removeFromCart) 
 
-orderProductRouter.post("/insert-into-order-product", insertIntoOrderProduct) 
+orderProductRouter.post(dev.development.INSERT_INTO_ORDER_PRODUCT, insertIntoOrderProduct) 
 
 
-orderProductRouter.put("/update-cart", updateCart)
+orderProductRouter.put(dev.development.UPDATE_CART, updateCart)
 
-orderProductRouter.get("/get-all-product-orders",getAllProductOrders);
+orderProductRouter.get(dev.development.GET_ALL_PRODUCT_ORDERS,getAllProductOrders);
 
 
 

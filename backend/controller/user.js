@@ -110,45 +110,43 @@ module.exports = {
 
   updateUser: async (req, res) => {
     try {
-      // Get user ID from JWT token
+ 
       const userId = req.user.id;
       const { userName, email, currentPassword, newPassword } = req.body;
 
-      // Find the current user
+
       const user = await User.findOne({ where: { id: userId } });
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
 
-      // Prepare update object
+
       const updateData = {
         userName: userName || user.userName,
         email: email || user.email,
       };
 
-      // If password change is requested
       if (currentPassword && newPassword) {
-        // Verify current password
+
         const isPasswordValid = await bcrypt.compare(currentPassword, user.password);
         if (!isPasswordValid) {
           return res.status(400).json({ message: "Current password is incorrect" });
         }
 
-        // Hash new password
+
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(newPassword, salt);
         updateData.password = hashedPassword;
       }
 
-      // Update user
+
       await User.update(updateData, {
         where: { id: userId }
       });
 
-      // Fetch updated user data
       const updatedUser = await User.findOne({ 
         where: { id: userId },
-        attributes: ['id', 'userName', 'email', 'role'] // Exclude password from response
+        attributes: ['id', 'userName', 'email', 'role'] 
       });
 
       res.status(200).json({ 
@@ -202,12 +200,10 @@ module.exports = {
 
   checkAuth: async (req, res) => {
     try {
-      // Since authenticateJWT middleware adds user to req object
       if (req.user) {
-        // Fetch fresh user data from database
         const user = await User.findOne({ 
           where: { id: req.user.id },
-          attributes: ['id', 'userName', 'email', 'role'] // Exclude sensitive data
+          attributes: ['id', 'userName', 'email', 'role'] 
         });
 
         if (!user) {

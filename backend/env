@@ -1,8 +1,0 @@
-JWT_EXPIRATION=1h
-DB_NAME=E-commerce
-DB_USER=root
-DB_PASSWORD=root1234
-DB_HOST=localhost
-DB_DIALECT=mysql
-JWT_SECRET=yourSecretKey
-JWT_EXPIRATION=24h

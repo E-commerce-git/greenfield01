@@ -54,7 +54,7 @@ db.Review.belongsTo(db.Product);
 db.Order.belongsToMany(db.Product,{ through: db.OrderProduct })
 db.Product.belongsToMany(db.Order,{ through: db.OrderProduct })
 
-// connection.sync({alter : true})
+
 
 module.exports=db
 
