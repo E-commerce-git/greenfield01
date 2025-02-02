@@ -48,6 +48,7 @@ const LoginForm = () => {
       } else {
         navigate('/'); // or wherever you want users to go
       }
+
     } catch (error) {
       console.error('Login error:', error);
       dispatch(loginFailure(error.response?.data?.message || 'Login failed'));
@@ -66,15 +67,41 @@ const LoginForm = () => {
           />
         </div>
 
-        {/* Login Form Section */}
-        <div className="w-1/2">
-          <div className="max-w-md w-full space-y-8">
-            <div>
-              <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                Sign in to your account
-              </h2>
+        {/* Form Column */}
+        <div className="w-full lg:w-1/2 px-8 py-12">
+          <div className="w-full max-w-md space-y-8 mx-auto">
+            <div className="text-center">
+              <h1 className="text-3xl font-semibold text-[#030406]">Welcome Back</h1>
+              <p className="text-sm text-gray-600 mt-2">Please enter your details</p>
             </div>
-            <form className="space-y-6" onSubmit={handleSubmit}>
+
+            {/* Role Switcher */}
+            <div className="flex justify-center space-x-2 p-1 bg-gray-100 rounded-lg">
+              <button
+                type="button"
+                className={`flex-1 py-2 px-4 rounded-md transition-all ${
+                  formData.role === 'user'
+                    ? 'bg-white shadow text-[#db4444]'
+                    : 'text-gray-600 hover:text-[#db4444]'
+                }`}
+                onClick={() => setFormData(prev => ({ ...prev, role: 'user' }))}
+              >
+                Customer
+              </button>
+              <button
+                type="button"
+                className={`flex-1 py-2 px-4 rounded-md transition-all ${
+                  formData.role === 'seller'
+                    ? 'bg-white shadow text-[#db4444]'
+                    : 'text-gray-600 hover:text-[#db4444]'
+                }`}
+                onClick={() => setFormData(prev => ({ ...prev, role: 'seller' }))}
+              >
+                Seller
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-4">
                 <div>
                   <label htmlFor="email" className="sr-only">Email address</label>
@@ -102,19 +129,7 @@ const LoginForm = () => {
                     onChange={handleChange}
                   />
                 </div>
-                <div>
-                  <label htmlFor="role" className="sr-only">Select Role</label>
-                  <select
-                    id="role"
-                    name="role"
-                    value={formData.role}
-                    onChange={handleChange}
-                    className="block w-full px-3 py-2 bg-gray-0 text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-[#DC2626]  sm:text-sm"
-                  >
-                    <option value="user">Customer</option>
-                    <option value="seller">Seller</option>
-                  </select>
-                </div>
+                
               </div>
 
               {error && (
@@ -123,13 +138,13 @@ const LoginForm = () => {
                 </div>
               )}
 
-              <div>
+              <div className="space-y-4">
                 <button
                   type="submit"
                   disabled={loading}
                   className="w-1/2 mx-auto flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[#DB4444] hover:bg-[#DC2626] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500"
                 >
-                  {loading ? 'Signing in...' : `Sign in as ${formData.role}`}
+                  {loading ? 'Signing in...' : `Sign in as ${formData.role === 'user' ? 'Customer' : 'Seller'}`}
                 </button>
               </div>
             </form>

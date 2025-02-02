@@ -24,7 +24,6 @@ const RegisterForm = () => {
   const { loading, error, registerSuccess } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    
     return () => {
       dispatch(clearRegisterStatus());
     };
@@ -32,7 +31,6 @@ const RegisterForm = () => {
 
   useEffect(() => {
     if (registerSuccess) {
-   
       navigate('/login');
     }
   }, [registerSuccess, navigate]);
@@ -46,27 +44,19 @@ const RegisterForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (formData.password !== formData.confirmPassword) {
       dispatch(registerFailure('Passwords do not match'));
       return;
     }
-
     try {
       dispatch(registerStart());
       const { confirmPassword, ...registerData } = formData;
-
-      
       const response = await axios.post('http://localhost:3000/api/user/register', registerData);
       console.log(response.data);
-      
-      
       dispatch(registerSuccessAction());
-      
       setTimeout(() => {
         navigate('/login');
       }, 2000);
-      
     } catch (err) {
       const errorMessage = err.response?.data?.message || 'Registration failed';
       dispatch(registerFailure(errorMessage));
@@ -84,16 +74,29 @@ const RegisterForm = () => {
             className="w-full max-w-md rounded-lg shadow-lg mb-6"
           />
         </div>
-
-        {/* Register Form Section */}
-        <div className="w-1/2">
-          <div className="max-w-md w-full space-y-8">
-            <div>
-              <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                Create your account
-              </h2>
+        <div className="w-full lg:w-1/2 px-8 py-12">
+          <div className="w-full max-w-md space-y-8 mx-auto">
+            <div className="text-center">
+              <h1 className="text-3xl font-semibold text-[#030406]">Create Your Account</h1>
+              <p className="text-sm text-gray-600 mt-2">Please enter your details</p>
             </div>
-            <form className="space-y-6" onSubmit={handleSubmit}>
+            <div className="flex justify-center space-x-2 p-1 bg-gray-100 rounded-lg">
+              <button
+                type="button"
+                className={`flex-1 py-2 px-4 rounded-md transition-all ${formData.role === 'user' ? 'bg-white shadow text-[#db4444]' : 'text-gray-600 hover:text-[#db4444]'}`}
+                onClick={() => setFormData(prev => ({ ...prev, role: 'user' }))}
+              >
+                Customer
+              </button>
+              <button
+                type="button"
+                className={`flex-1 py-2 px-4 rounded-md transition-all ${formData.role === 'seller' ? 'bg-white shadow text-[#db4444]' : 'text-gray-600 hover:text-[#db4444]'}`}
+                onClick={() => setFormData(prev => ({ ...prev, role: 'seller' }))}
+              >
+                Seller
+              </button>
+            </div>
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-4">
                 <div>
                   <label htmlFor="userName" className="sr-only">Username</label>
@@ -147,19 +150,7 @@ const RegisterForm = () => {
                     onChange={handleChange}
                   />
                 </div>
-                <div>
-                  <label htmlFor="role" className="sr-only">Select Role</label>
-                  <select
-                    id="role"
-                    name="role"
-                    value={formData.role}
-                    onChange={handleChange}
-                    className="block w-full px-3 py-2 bg-gray-50 text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-[#DC2626]  sm:text-sm"
-                  >
-                    <option value="user">User</option>
-                    <option value="seller">Seller</option>
-                  </select>
-                </div>
+               
               </div>
 
               {error && (
@@ -176,19 +167,13 @@ const RegisterForm = () => {
                 >
                   {loading ? 'Creating account...' : `Register as ${formData.role}`}
                 </button>
+                <div className="text-center">
+                  <span className="text-sm text-gray-600">Already have an account?</span>
+                  <button type="button" className="text-[#db4444] text-sm hover:underline ml-1" onClick={() => navigate('/login')}>Sign in</button>
+                </div>
               </div>
             </form>
-            <div className="text-center mt-4">
-              <p className="text-sm text-gray-600">
-                Already have an account?{' '}
-                <a 
-                  href="/login" 
-                  className="font-medium text-[#DB4444] hover:text-[#DC2626]"
-                >
-                  Sign in
-                </a>
-              </p>
-            </div>
+            
           </div>
         </div>
       </div>
