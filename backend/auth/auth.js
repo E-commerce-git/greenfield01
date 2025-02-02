@@ -12,7 +12,6 @@ console.log("token verify ",token);
   }
 
   try {
-   
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     console.log("decode",decoded);
     

@@ -3,15 +3,16 @@ import { useSelector } from 'react-redux';
 import { Heart } from 'lucide-react';
 import axios from 'axios';  
 import { Link, useNavigate } from 'react-router-dom';
+import { useWishlist } from '../pages/wishlist/WishlistContext';
 
 export default function Navbar() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
   const [showUserInfo, setShowUserInfo] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const [hideTimeout, setHideTimeout] = useState(null);
 
-  const wishlistItems = useSelector((state) => state.wishlist.items);
-
+  const { wishlistItems } = useWishlist();
   const navigate = useNavigate();
 
   // Authentication check effect
@@ -41,15 +42,14 @@ export default function Navbar() {
     };
     
     checkAuth();
-  }, []); // runs once when the component mounts
+  }, []);
 
-  // Re-authenticate when the component mounts or when the user logs in
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      setIsAuthenticated(true);
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search/${searchQuery}`);
     }
-  }, [isAuthenticated]); // rerun this effect whenever isAuthenticated state changes
+  };
 
   return (
     <nav className="bg-white shadow-lg">
@@ -67,19 +67,32 @@ export default function Navbar() {
             )}
           </div>
 
-          <div className="flex items-center">
-            <input type="text" placeholder="Search products..." className="px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-[#DB4444] focus:border-transparent"/>
-            <button className="px-4 py-2 bg-[#DB4444] text-white rounded-r-md hover:bg-[#DC2626] transition duration-200">Search</button>
-          </div>
+          <form onSubmit={handleSearch} className="flex items-center">
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-[#DB4444] focus:border-transparent"
+            />
+            <button 
+              type="submit"
+              className="px-4 py-2 bg-[#DB4444] text-white rounded-r-md hover:bg-[#DC2626] transition duration-200"
+            >
+              Search
+            </button>
+          </form>
 
           <div className="flex items-center space-x-4">
             <div className="relative">
-              <Heart className="w-6 h-6" />
-              {wishlistItems.length > 0 && (
-                <span className="absolute -top-2 -right-2 bg-[#db4444] text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
-                  {wishlistItems.length}
-                </span>
-              )}
+              <Link to="/wishlist" className="text-gray-800 hover:text-red-600 transition duration-200">
+                <Heart className="w-6 h-6" />
+                {wishlistItems.length > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-[#db4444] text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+                    {wishlistItems.length}
+                  </span>
+                )}
+              </Link>
             </div>
 
             <button onClick={() => navigate('/Cart')} className="text-gray-800 hover:text-blue-600 transition duration-200" aria-label="Cart">
@@ -95,7 +108,7 @@ export default function Navbar() {
                 setShowUserInfo(true);
               }}
               onMouseLeave={() => {
-                const timeout = setTimeout(() => setShowUserInfo(false), 300); // Delay before hiding
+                const timeout = setTimeout(() => setShowUserInfo(false), 300);
                 setHideTimeout(timeout);
               }}
             >
