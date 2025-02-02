@@ -13,10 +13,10 @@ const App = () => {
   return (
     <Router>
       <Routes>
-        {/* Public Route */}
+       
         <Route path="/login" element={<Login />} />
 
-        {/* Protected Routes */}
+ 
         <Route
           path="/"
           element={

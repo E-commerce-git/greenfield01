@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../store/redux/useAuth";
+import apis from "../../config/api";
 
 const OrderList = () => {
   const [orders, setOrders] = useState([]);
@@ -20,7 +21,7 @@ const OrderList = () => {
 
   const fetchOrders = async () => {
     try {
-      const response = await fetch("http://localhost:3000/api/orders/get-all-orders", {
+      const response = await fetch(apis.apisOrder.getAllOrders, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -35,7 +36,7 @@ const OrderList = () => {
 
   const fetchOrderProducts = async () => {
     try {
-      const response = await fetch("http://localhost:3000/api/get-all-product-orders", {
+      const response = await fetch(apis.apisOrder.getAllProductOrders, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -52,16 +53,14 @@ const OrderList = () => {
 
   const fetchOrderDetails = async (orderId) => {
     try {
-      // Fetch order products
-      const productsResponse = await fetch(`http://localhost:3000/api/orders/${orderId}/products`, {
+      const productsResponse = await fetch(apis.apisOrder.getOrderDetails(orderId), {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
       const productsData = await productsResponse.json();
 
-      // Fetch user details
-      const userResponse = await fetch(`http://localhost:3000/api/user/user/${productsData.order.UserId}`, {
+      const userResponse = await fetch(apis.apisUser.fetchUserById + productsData.order.UserId, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -87,7 +86,7 @@ const OrderList = () => {
 
   const handleStatusUpdate = async (orderId, newStatus) => {
     try {
-      const response = await fetch(`http://localhost:3000/api/orders/${orderId}/status`, {
+      const response = await fetch(apis.apisOrder.updateOrderStatus(orderId), {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -97,7 +96,6 @@ const OrderList = () => {
       });
 
       if (response.ok) {
-        // Update local state
         setOrders(orders.map(order => 
           order.id === orderId ? { ...order, status: newStatus } : order
         ));
@@ -144,7 +142,7 @@ const OrderList = () => {
           </div>
 
           <div className="space-y-6">
-            {/* Order Status and Total */}
+            
             <div className="bg-gray-50 p-4 rounded-lg">
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -160,7 +158,7 @@ const OrderList = () => {
               </div>
             </div>
 
-            {/* Customer Information */}
+           
             <div className="border-t border-gray-200 pt-4">
               <h3 className="text-lg font-medium text-gray-900 mb-2">Customer Information</h3>
               <div className="grid grid-cols-2 gap-4">
@@ -175,7 +173,7 @@ const OrderList = () => {
               </div>
             </div>
 
-            {/* Products List */}
+      
             <div className="border-t border-gray-200 pt-4">
               <h3 className="text-lg font-medium text-gray-900 mb-4">Products</h3>
               <div className="overflow-x-auto">
@@ -272,7 +270,7 @@ const OrderList = () => {
 
         <div className="bg-white shadow overflow-hidden sm:rounded-md">
           <ul className="divide-y divide-gray-200">
-            {[...orders].reverse().map((order) => {
+            {[...orders].sort((a, b) => b.id - a.id).map((order) => {
               const orderProductItems = orderProducts.filter(op => op.OrderId === order.id);
               
               return (

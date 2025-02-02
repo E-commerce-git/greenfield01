@@ -32,7 +32,7 @@ const Dashboard = () => {
       setLoading(true);
       setError("");
   
-      // Fetch users
+     
       const usersResponse = await axios.get(apis.apisUser.fetchUsers, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -40,13 +40,13 @@ const Dashboard = () => {
       });
       const usersData = usersResponse.data;
   
-      // Count users by role
+     
       const userCounts = usersData.reduce((acc, user) => {
         acc[user.role] = (acc[user.role] || 0) + 1;
         return acc;
       }, {});
   
-      // Fetch products
+     
       const productsResponse = await axios.get(apis.productsApi.getAllProducts, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -54,7 +54,7 @@ const Dashboard = () => {
       });
       const productsData = productsResponse.data;
   
-      // Fetch categories
+      
       const categoriesResponse = await axios.get(apis.apisCategory.getAll, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -101,7 +101,7 @@ const Dashboard = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-      {/* Header */}
+     
       <header className="bg-white border-b border-gray-200 px-6 py-4">
         <div className="flex justify-between items-center max-w-7xl mx-auto">
           <div className="flex items-center space-x-4">
@@ -123,7 +123,7 @@ const Dashboard = () => {
       </header>
 
       <div className="flex flex-1">
-        {/* Sidebar */}
+      
         <aside className="w-64 bg-gray-800 text-white">
           <nav className="mt-5 px-2">
             <div className="space-y-1">
@@ -200,7 +200,6 @@ const Dashboard = () => {
           </nav>
         </aside>
 
-        {/* Main Content */}
         <main className="flex-1 overflow-y-auto bg-gray-50">
           <div className="py-6 px-8">
             <div className="max-w-7xl mx-auto">
@@ -259,7 +258,7 @@ const Dashboard = () => {
                     />
                   </div>
 
-                  {/* User Breakdown */}
+                
                   <div className="bg-white rounded-xl shadow-md p-6 mb-8">
                     <h3 className="text-xl font-semibold text-gray-800 mb-4">User Breakdown</h3>
                     <div className="grid grid-cols-3 gap-4">
@@ -278,7 +277,7 @@ const Dashboard = () => {
                     </div>
                   </div>
 
-                  {/* Quick Actions */}
+                
                   <div className="bg-white rounded-xl shadow-md p-6">
                     <h3 className="text-xl font-semibold text-gray-800 mb-4">Quick Actions</h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

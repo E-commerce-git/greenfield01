@@ -3,7 +3,7 @@ const {createOrder,getAllOrders,updateOrderStatus, getOrderDetails} = require(".
 
 const authenticateJWT=require("../auth/auth.js")
 orderRouter.post("/create-order/:id", createOrder)
-orderRouter.get("/get-all-orders", getAllOrders);
+orderRouter.get("/get-all-orders", authenticateJWT,getAllOrders);
 orderRouter.put('/:id/status', authenticateJWT, updateOrderStatus);
 orderRouter.get('/:id/products', authenticateJWT, getOrderDetails);
 
