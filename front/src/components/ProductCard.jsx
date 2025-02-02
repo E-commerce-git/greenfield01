@@ -1,6 +1,5 @@
 // src/components/ProductCard.js
 import React from 'react';
-import { addToCart } from "../functions/addToCard";
 import { useCart } from '../pages/cart/CartContext'; // Import useCart
 import { useAuth } from '../context/AuthContext'; // Make sure you have this context
 import axios from 'axios';
@@ -9,9 +8,6 @@ export default function ProductCard({ product, onDelete }) {
   const { updateCart } = useCart(); // Get updateCart from context
   const { user } = useAuth(); // Get the user from auth context
 
-  const handleAddToCart = () => {
-    addToCart(product, updateCart);
-  };
 
   const handleDelete = async (e) => {
     e.stopPropagation(); // Prevent navigation when clicking delete
@@ -65,9 +61,9 @@ export default function ProductCard({ product, onDelete }) {
       {/* Add to Cart Button */}
       <button 
         className="w-full bg-black text-white py-2 rounded hover:bg-gray-800 transition-colors mb-3" 
-        onClick={handleAddToCart}
+        
       >
-        Add To Cart
+        view product
       </button>
 
       {/* Product Details */}

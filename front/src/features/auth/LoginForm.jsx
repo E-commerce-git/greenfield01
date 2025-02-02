@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux';
 import { loginStart, loginSuccess, loginFailure } from '../../store/slices/authSlice';
+import justImage from "../../assets/SignImg.png"
 import axios from 'axios';
 
 const LoginForm = () => {
@@ -58,7 +59,7 @@ const LoginForm = () => {
         {/* Product Image Section */}
         <div className="w-1/2 flex flex-col items-center justify-center bg-gray-100 p-8 rounded-lg">
           <img 
-            src="../../assets" 
+            src={justImage} 
             alt="Product"
             className="w-full max-w-md rounded-lg shadow-lg mb-6"
           />
@@ -107,7 +108,7 @@ const LoginForm = () => {
                     name="role"
                     value={formData.role}
                     onChange={handleChange}
-                    className="block w-full px-3 py-2 bg-gray-50 text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm"
+                    className="block w-full px-3 py-2 bg-gray-0 text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-[#DC2626]  sm:text-sm"
                   >
                     <option value="user">Customer</option>
                     <option value="seller">Seller</option>
@@ -125,7 +126,7 @@ const LoginForm = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-1/2 mx-auto flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500"
+                  className="w-1/2 mx-auto flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[#DB4444] hover:bg-[#DC2626] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500"
                 >
                   {loading ? 'Signing in...' : `Sign in as ${formData.role}`}
                 </button>
@@ -136,7 +137,7 @@ const LoginForm = () => {
                 Don't have an account?{' '}
                 <button 
                   type="button" 
-                  className="font-medium text-amber-600 hover:text-amber-500"
+                  className="font-medium text-[#DB4444] hover:text-[#DC2626]"
                   onClick={() => navigate('/register')}
                 >
                   Sign up
