@@ -4,6 +4,8 @@ import { useState, useEffect, useMemo, useCallback } from "react"
 import { Heart, Minus, Plus, Eye } from "lucide-react"
 import { useDispatch, useSelector } from 'react-redux'
 import { addToWishlist, removeFromWishlist } from '../redux/wishlistSlice'
+import { useParams } from 'react-router-dom'
+import ReviewForm from '../components/ReviewForm'
 
 export default function ProductDetail({ product, productList }) {
   // Remove the debug useEffect temporarily
@@ -15,6 +17,8 @@ export default function ProductDetail({ product, productList }) {
   const [failedImages, setFailedImages] = useState(new Set())
   const [userRating, setUserRating] = useState(0)
   const [isHovering, setIsHovering] = useState(0)
+  const [reviews, setReviews] = useState([])
+  const { id } = useParams()
   
   const dispatch = useDispatch()
   const wishlist = useSelector((state) => state.wishlist.items)
@@ -61,6 +65,27 @@ export default function ProductDetail({ product, productList }) {
       return newSet
     })
   }, [])
+
+  const fetchReviews = async () => {
+    try {
+      const response = await fetch(`http://localhost:3000/api/reviews/product/${id}`);
+      if (response.ok) {
+        const data = await response.json();
+        setReviews(data);
+      }
+    } catch (error) {
+      console.error('Error fetching reviews:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchReviews();
+  }, [id]);
+
+  const handleReviewSubmit = (productId, rating, comment) => {
+    addReview(productId, rating, comment);
+    fetchReviews(); // Refresh the reviews display
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -236,6 +261,35 @@ export default function ProductDetail({ product, productList }) {
                   <span className="text-gray-500 text-sm">({product.reviews})</span>
                 </div>
               </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Reviews section */}
+      <div className="mt-16">
+        <h2 className="text-2xl font-bold mb-4">Customer Reviews</h2>
+        <ReviewForm productId={id} onSubmit={handleReviewSubmit} />
+        
+        <div className="mt-6">
+          {reviews.map((review) => (
+            <div key={review.id} className="border-b py-4">
+              <div className="flex items-center mb-2">
+                <div className="flex">
+                  {[...Array(5)].map((_, index) => (
+                    <span
+                      key={index}
+                      className={`text-yellow-400 ${index < review.rating ? 'fill-current' : 'text-gray-300'}`}
+                    >
+                      ★
+                    </span>
+                  ))}
+                </div>
+                <span className="ml-2 text-sm text-gray-500">
+                  by {review.User?.userName || 'Anonymous'}
+                </span>
+              </div>
+              <p className="text-gray-700">{review.comment}</p>
             </div>
           ))}
         </div>

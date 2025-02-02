@@ -18,18 +18,18 @@ export const WishlistProvider = ({ children }) => {
     localStorage.setItem('wishlist', JSON.stringify(wishlistItems));
   }, [wishlistItems]);
 
-  const addToWishlist = (productId) => {
+  const addToWishlist = (product) => {
     setWishlistItems((prevItems) => {
-      if (!prevItems.includes(productId)) {
-        return [...prevItems, productId];
+      if (!prevItems.some(item => item.id === product.id)) {
+        return [...prevItems, product];
       }
       return prevItems;
     });
   };
 
-  const removeFromWishlist = (productId) => {
+  const removeFromWishlist = (product) => {
     setWishlistItems((prevItems) => 
-      prevItems.filter((id) => id !== productId)
+      prevItems.filter((item) => item.id !== product.id)
     );
   };
 
