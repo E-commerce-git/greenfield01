@@ -7,15 +7,16 @@ import UserProfile from "./components/UserProfile";
 import UserList from "./components/UserList";
 import ProductList from "./components/ProductList";
 import CategoryList from "./components/CategoryList";
+import OrderList from "./components/OrderList";
 
 const App = () => {
   return (
     <Router>
       <Routes>
-        {/* Public Route */}
+       
         <Route path="/login" element={<Login />} />
 
-        {/* Protected Routes */}
+ 
         <Route
           path="/"
           element={
@@ -61,6 +62,14 @@ const App = () => {
           element={
             <PrivateRoute>
               <CategoryList />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/orders"
+          element={
+            <PrivateRoute>
+              <OrderList />
             </PrivateRoute>
           }
         />

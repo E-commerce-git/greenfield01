@@ -17,5 +17,12 @@ const apisCategory = {
     getAllProducts:`${import.meta.env.VITE_BASE_URL}${import.meta.env.VITE_PRODUCT}`,
     productById:`${import.meta.env.VITE_BASE_URL}${import.meta.env.VITE_PRODUCTBYID}`,
   }
+
+  const apisOrder = {
+    getAllOrders: `${import.meta.env.VITE_BASE_URL}${import.meta.env.VITE_ORDER_GETALL}`,
+    getAllProductOrders: `${import.meta.env.VITE_BASE_URL}${import.meta.env.VITE_ORDER_PRODUCTS}`,
+    updateOrderStatus: (orderId) => `${import.meta.env.VITE_BASE_URL}${import.meta.env.VITE_ORDER_STATUS}/${orderId}/status`,
+    getOrderDetails: (orderId) => `${import.meta.env.VITE_BASE_URL}${import.meta.env.VITE_ORDER_DETAILS}/${orderId}/products`,
+  };
   
-  export default { apisCategory, apisUser,Authentication,productsApi };    
+  export default { apisCategory, apisUser,Authentication,productsApi, apisOrder };    
