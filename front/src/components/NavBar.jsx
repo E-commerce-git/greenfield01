@@ -3,33 +3,34 @@ import { useSelector } from 'react-redux';
 import { Heart } from 'lucide-react';
 
 import { Link, useNavigate } from 'react-router-dom';
+import { useWishlist } from '../pages/wishlist/WishlistContext';
 
 export default function Navbar() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
   const [showUserInfo, setShowUserInfo] = useState(false);
 
-  const wishlistItems = useSelector((state) => state.wishlist.items);
+  const { wishlistItems } = useWishlist();
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const {data} = await axios.get('http://localhost:3000/api/user/check-auth', {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        });
+  // useEffect(() => {
+  //   const checkAuth = async () => {
+  //     try {
+  //       const {data} = await axios.get('http://localhost:3000/api/user/check-auth', {
+  //         headers: {
+  //           'Authorization': `Bearer ${localStorage.getItem('token')}`
+  //         }
+  //       });
     
-        console.log('Auth response:', data); // Debug log
-        setIsAuthenticated(data.isAuthenticated);
-        setUser(data.user);
-      } catch (error) {
-        console.error('Auth check failed:', error);
-      }
-    };
+  //       console.log('Auth response:', data); // Debug log
+  //       setIsAuthenticated(data.isAuthenticated);
+  //       setUser(data.user);
+  //     } catch (error) {
+  //       console.error('Auth check failed:', error);
+  //     }
+  //   };
     
-    checkAuth();
-  }, []);
+  //   checkAuth();
+  // }, []);
 
   // Debug logs
   // console.log('Auth state:', { isAuthenticated, user, showUserInfo });
@@ -76,14 +77,16 @@ export default function Navbar() {
 
           {/* User Actions */}
           <div className="flex items-center space-x-4">
-            {/* Heart Icon (Favoriting) */}
+            {/* Wishlist Icon */}
             <div className="relative">
-              <Heart className="w-6 h-6" />
-              {wishlistItems.length > 0 && (
-                <span className="absolute -top-2 -right-2 bg-[#db4444] text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
-                  {wishlistItems.length}
-                </span>
-              )}
+              <Link to="/wishlist" className="text-gray-800 hover:text-blue-600 transition duration-200">
+                <Heart className="w-6 h-6" />
+                {wishlistItems.length > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-[#db4444] text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+                    {wishlistItems.length}
+                  </span>
+                )}
+              </Link>
             </div>
 
             {/* Shopping Cart Icon */}
@@ -103,12 +106,8 @@ export default function Navbar() {
               <Link 
                 to="/profile" 
                 className={`text-gray-800 hover:text-red-600 transition duration-200 ${isAuthenticated ? '!text-red-500' : ''}`}
-                onMouseEnter={() => {
-                  setShowUserInfo(true);
-                }}
-                onMouseLeave={() => {
-                  setShowUserInfo(false);
-                }}
+                onMouseEnter={() => setShowUserInfo(true)}
+                onMouseLeave={() => setShowUserInfo(false)}
               >
                 <div className="flex flex-col items-center">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

@@ -2,6 +2,8 @@
 const express = require('express');
 const orderProductRouter = require("../routes/orderProducts.js")
 const orderRouter = require("../routes/orderRouter.js");
+const paymentRoutes = require('../routes/payment.js');
+const contactRoutes = require("../routes/contact.js")
 
 const PORT = 3000;
 // const helmet = require('helmet')
@@ -27,19 +29,11 @@ app.use("/api/",orderProductRouter)
 app.use("/api/user/",userroutes)
 app.use("/api/product/",productRoutes)
 app.use("/api/category/", categoryRoutes);
-
-
+app.use('/api/payment', paymentRoutes);
+app.use("/api/contact", contactRoutes);
 // make the server listen to requests
 app.listen(PORT, () => {
   console.log(`Server running at: http://localhost:${PORT}/`);
 });
 
 module.exports=app
-
-
-
-
-
-
-
-

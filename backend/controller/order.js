@@ -30,18 +30,24 @@ const handleTotal = async (ProductId,quantity,OrderId,oldQuantity,t) =>{
 };
 
 const createOrder = async(req,res)=>{
-    const id = req.params.id;
-    const {total} = req.body;
-    if(!id){
-      return res.status(400).json({ error: "No user ID provided" });
-    }
-    try{
-      const newOrder = await Order.create({UserId: id,total:total});
-      res.status(201).json({ message: "Order created successfully", order: newOrder });
+    const { total } = req.body;
+    const userId = req.params.id;
 
-    }catch (err){
-      console.error("Error creating order:", err);
-      return res.status(500).json({ error: "Failed to create order" });
+    if (!userId || !total) {
+        return res.status(400).json({ error: "User ID and total are required" });
+    }
+
+    try {
+        const newOrder = await Order.create({
+            UserId: userId,
+            total,
+            status: 'pending', // Default status
+        });
+
+        res.status(201).json({ message: "Order created successfully", order: newOrder });
+    } catch (err) {
+        console.error("Error creating order:", err);
+        res.status(500).json({ error: "Failed to create order" });
     }
 }
 module.exports = {handleTotal,createOrder}

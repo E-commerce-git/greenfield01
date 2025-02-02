@@ -1,17 +1,35 @@
 // src/components/ProductCard.js
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { addToCart } from "../functions/addToCard";
 import { useCart } from '../pages/cart/CartContext'; // Import useCart
+import { useWishlist } from '../pages/wishlist/WishlistContext';
+import { Heart } from 'lucide-react';
 
 export default function ProductCard({ product }) {
-  const { updateCart } = useCart(); // Get updateCart from context
+  const { updateCart } = useCart();
+  const { wishlistItems, addToWishlist, removeFromWishlist } = useWishlist();
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  // Check if product is in wishlist on component mount
+  useEffect(() => {
+    setIsFavorite(wishlistItems.includes(product.id));
+  }, [wishlistItems, product.id]);
 
   const handleAddToCart = () => {
     addToCart(product, updateCart);
   };
 
+  const handleFavoriteClick = () => {
+    if (isFavorite) {
+      removeFromWishlist(product.id);
+    } else {
+      addToWishlist(product.id);
+    }
+    setIsFavorite(!isFavorite);
+  };
+
   return (
-    <div className="relative bg-white p-3 rounded-lg">
+    <div className="relative bg-white p-3 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
       {/* Discount Badge */}
       {product.discount && (
         <div className="absolute top-3 left-3 bg-[#DB4444] text-white text-sm px-2 py-1 rounded">
@@ -19,21 +37,15 @@ export default function ProductCard({ product }) {
         </div>
       )}
       
-      {/* Action Buttons */}
-      <div className="absolute top-3 right-3 flex flex-col gap-2">
-        <button className="p-2 bg-white rounded-full shadow hover:bg-gray-100">
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
-              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-          </svg>
-        </button>
-        <button className="p-2 bg-white rounded-full shadow hover:bg-gray-100">
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
-              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-          </svg>
-        </button>
-      </div>
+      {/* Favorite Button */}
+      <button 
+        className="absolute top-3 right-3 p-2 bg-white rounded-full shadow hover:bg-gray-100 transition-colors duration-200"
+        onClick={handleFavoriteClick}
+      >
+        <Heart 
+          className={`w-5 h-5 ${isFavorite ? 'text-red-500 fill-current' : 'text-gray-800'}`} 
+        />
+      </button>
 
       {/* Product Image */}
       <img 
