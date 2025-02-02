@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-
+import development from "../config/default";
 export default function ContactUS() {
   const [formData, setFormData] = useState({
     name: "",
@@ -20,7 +20,7 @@ export default function ContactUS() {
     setLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:3000/api/contact/send", formData);
+      const response = await axios.post(development.VITE_SEND, formData);
 
      
       if (response.data.success) {

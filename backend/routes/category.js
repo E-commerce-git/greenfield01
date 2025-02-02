@@ -1,4 +1,5 @@
 const express = require("express");
+const dev = require('../database/config.js');
 const { 
   getAllCategories, 
   addCategory, 
@@ -10,22 +11,22 @@ const {
 
 const categoryRouter = express.Router();
 
-// Get all categories
-categoryRouter.get("/categories", getAllCategories);
 
-// Get single category
-categoryRouter.get("/category/:id", getCategoryById);
+categoryRouter.get(dev.development.CATEGORY, getAllCategories);
 
-// Add new category
-categoryRouter.post("/add", addCategory);
 
-// Update category
-categoryRouter.put("/update/:id", updateCategory);
+categoryRouter.get(dev.development.GET_CATEGORY_BY_ID, getCategoryById);
 
-// Delete category
-categoryRouter.delete("/delete/:id", deleteCategory);
 
-// Get products by category
-categoryRouter.get("/:categoryId/products", getProductsByCategory);
+categoryRouter.post(dev.development.ADD_CATEGORY, addCategory);
+
+
+categoryRouter.put(dev.development.UPDATE_CATEGORY, updateCategory);
+
+
+categoryRouter.delete(dev.development.DELETE_CATEGORY, deleteCategory);
+
+
+categoryRouter.get(dev.development.GET_PRODUCTS_BY_CATEGORY, getProductsByCategory);
 
 module.exports = categoryRouter;

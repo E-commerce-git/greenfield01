@@ -1,12 +1,17 @@
-
-
 import dotenv from 'dotenv';
 dotenv.config();
 
 
     const development={
-        STRIPE_PUBLIC_KEY: "pk_test_51QmDigCSIHj5BO0w8Yl64lZRRUxBmKJfhl7GZ73qwZLoDRvqH9dwG84ltpUindF0mWqcw0w6WT23ShLwzbn99Juw00mSIL3wZe",
-        STRIPE_SECRET_KEY: "sk_test_51QnDATDUzbGT4QgcqJOe7IHriFwHxIXWp5SmtCjrKd44hXB4ItAdHJJnci1tuTk38RsIvtt6TljKUiOoByoM9Rll00csfgaAmI"
+        STRIPE_PUBLIC_KEY: import.meta.env.VITE_STRIPE_PUBLIC_KEY,
+        STRIPE_SECRET_KEY: import.meta.env.STRIPE_SECRET_KEY,
+        VITE_PRODUCT: import.meta.env.VITE_PRODUCT,
+        VITE_CLOUDINARY: import.meta.env.VITE_CLOUDINARY,
+        VITE_CATEGORY: import.meta.env.VITE_CATEGORY,
+        VITE_REVIEW: import.meta.env.VITE_REVIEW,
+        VITE_RP: import.meta.env.VITE_RP,
+        VITE_SEND: import.meta.env.VITE_SEND,
+        VITE_PAYMMENT: import.meta.env.VITE_PAYMMENT,
     }
 
 

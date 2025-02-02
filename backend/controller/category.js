@@ -44,13 +44,13 @@ module.exports = {
       const { id } = req.params;
       const { name } = req.body;
 
-      // Find the category
+
       const category = await Category.findByPk(id);
       if (!category) {
         return res.status(404).json({ message: "Category not found" });
       }
 
-      // Update the category
+
       await category.update({ name });
       
       res.json({ 
@@ -67,12 +67,12 @@ module.exports = {
     try {
       const { id } = req.params;
 
-      // First, delete all products associated with this category
+
       await Product.destroy({
         where: { CategoryId: id }
       });
 
-      // Then delete the category
+
       const result = await Category.destroy({
         where: { id }
       });
@@ -88,7 +88,7 @@ module.exports = {
     }
   },
 
-  // Optional: Get a single category by ID
+
   getCategoryById: async (req, res) => {
     try {
       const { id } = req.params;
