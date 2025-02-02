@@ -2,30 +2,32 @@
 import React, { useState, useEffect } from 'react';
 import { addToCart } from "../functions/addToCard";
 import { useCart } from '../pages/cart/CartContext'; // Import useCart
-import { useWishlist } from '../pages/wishlist/WishlistContext';
-import { Heart } from 'lucide-react';
+import { useAuth } from '../context/AuthContext'; // Make sure you have this context
+import axios from 'axios';
 
-export default function ProductCard({ product }) {
-  const { updateCart } = useCart();
-  const { wishlistItems, addToWishlist, removeFromWishlist } = useWishlist();
-  const [isFavorite, setIsFavorite] = useState(false);
-
-  // Check if product is in wishlist on component mount
-  useEffect(() => {
-    setIsFavorite(wishlistItems.includes(product.id));
-  }, [wishlistItems, product.id]);
+export default function ProductCard({ product, onDelete }) {
+  const { updateCart } = useCart(); // Get updateCart from context
+  const { user } = useAuth(); // Get the user from auth context
 
   const handleAddToCart = () => {
     addToCart(product, updateCart);
   };
 
-  const handleFavoriteClick = () => {
-    if (isFavorite) {
-      removeFromWishlist(product.id);
-    } else {
-      addToWishlist(product.id);
+  const handleDelete = async (e) => {
+    e.stopPropagation(); // Prevent navigation when clicking delete
+    try {
+      const token = localStorage.getItem('token');
+      await axios.delete(`http://localhost:3000/api/product/${product.id}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (onDelete) {
+        onDelete(product.id);
+      }
+    } catch (error) {
+      console.error('Failed to delete product:', error);
     }
-    setIsFavorite(!isFavorite);
   };
 
   return (
@@ -101,6 +103,16 @@ export default function ProductCard({ product }) {
       <div className="mt-2 text-sm text-gray-500">
         Stock: {product.stock}
       </div>
+
+      {/* Show delete button only if user is a seller */}
+      {user?.role === 'seller' && (
+        <button
+          onClick={handleDelete}
+          className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition-colors"
+        >
+          Delete
+        </button>
+      )}
     </div>
   );
 }

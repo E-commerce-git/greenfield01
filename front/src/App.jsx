@@ -2,7 +2,8 @@ import { Provider } from 'react-redux';
 import store from './store/store';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
-import { CartProvider } from './pages/cart/CartContext';  // Import the CartProvider
+import { CartProvider } from './pages/cart/CartContext';
+import { AuthProvider } from './context/AuthContext';
 import Footer from './components/Footer';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/NavBar';
@@ -38,7 +39,7 @@ const SellerRoute = ({ children }) => {
 function App() {
   return (
     <Provider store={store}>
-      <WishlistProvider>
+      <AuthProvider>
         <CartProvider>
           <Router>
             <Navbar />
@@ -71,19 +72,18 @@ function App() {
               
               {/* Seller Dashboard route with protection */}
               <Route 
-                path="/seller/dashboard" 
+                path="/SellerDashboard" 
                 element={
                   <SellerRoute>
                     <SellerDashboard />
                   </SellerRoute>
                 } 
               />
-              <Route path="/wishlist" element={<Wishlist />} />
             </Routes>
             <Footer />
           </Router>
         </CartProvider>
-      </WishlistProvider>
+      </AuthProvider>
     </Provider>
   );
 }
