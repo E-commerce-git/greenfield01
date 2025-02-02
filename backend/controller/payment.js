@@ -1,8 +1,8 @@
     const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-    const db = require('../database/connection'); // Adjust the path as needed
+    const db = require('../database/connection'); 
     const Order = db.Order;
 
-    // Create a Payment Intent
+
     const createPaymentIntent = async (req, res) => {
         const { orderId, paymentMethod } = req.body;
 
@@ -11,13 +11,11 @@
           }
 
         try {
-            // Fetch the existing order
             const order = await Order.findByPk(orderId);
             if (!order) {
                 return res.status(404).json({ error: "Order not found" });
             }
 
-            // Create a Stripe Payment Intent
             const paymentIntent = await stripe.paymentIntents.create({
                 amount: Math.round(order.total * 100), 
                 currency: 'usd',
@@ -27,12 +25,11 @@
             });
 
 
-            // Update the order with the paymentIntentId
             await order.update({ paymentIntentId: paymentIntent.id });
-            //change Status of order to 'paid'
+
             const newStatus = await order.update({ status: "paid" });
 
-            // Send the client secret to the frontend
+
             res.status(200).json({ clientSecret: paymentIntent.client_secret });
         } catch (error) {
             console.error("Error creating payment intent:", error);
@@ -40,7 +37,6 @@
         }
     };
 
-    // Handle Stripe Webhook
 
 
     module.exports = { createPaymentIntent };

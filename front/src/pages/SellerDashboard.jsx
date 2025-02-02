@@ -3,6 +3,7 @@ import { Plus, Trash2, Edit } from 'lucide-react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import development from '../config/default';
 
 export default function SellerDashboard() {
   const navigate = useNavigate();
@@ -43,7 +44,7 @@ export default function SellerDashboard() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/category/categories');
+        const response = await axios.get(development.VITE_CATEGORY);
         // Access the nested categories array
         setCategories(response.data.categories);
         console.log('Categories loaded:', response.data.categories);
@@ -84,7 +85,7 @@ export default function SellerDashboard() {
         }
 
         const response = await axios.post(
-            `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+            `${development.VITE_CLOUDINARY}${CLOUD_NAME}/image/upload`,
             formData
         );
 
@@ -128,17 +129,17 @@ export default function SellerDashboard() {
       let response;
       switch (activeForm) {
         case 'add':
-          response = await axios.post('http://localhost:3000/api/product/add', productData, config);
+          response = await axios.post(`${development.VITE_PRODUCT}add`, productData, config);
           console.log('Success Response:', response.data);
           break;
 
         case 'edit':
-          response = await axios.put(`http://localhost:3000/api/product/${productId}`, productData, config);
+          response = await axios.put(`${development.VITE_PRODUCT}${productId}`, productData, config);
           console.log('Success Response:', response.data);
           break;
 
         case 'delete':
-          response = await axios.delete(`http://localhost:3000/api/product/${productId}`, config);
+          response = await axios.delete(`${development.VITE_PRODUCT}${productId}`, config);
           console.log('Success Response:', response.data);
           break;
       }

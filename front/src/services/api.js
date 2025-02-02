@@ -1,7 +1,7 @@
 import axios from 'axios';
-
+import development from '../config/default';
 const api = axios.create({
-  baseURL: 'http://localhost:3000/api'
+  baseURL: development.VITE_API
 });
 
 api.interceptors.request.use((config) => {

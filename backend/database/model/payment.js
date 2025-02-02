@@ -15,7 +15,7 @@ module.exports = (connection, DataTypes) => {
       },
       status: {
         type: DataTypes.STRING,
-        defaultValue: 'pending', // You can change this to reflect different statuses like 'pending', 'failed', etc.
+        defaultValue: 'pending', 
       },
     });
   

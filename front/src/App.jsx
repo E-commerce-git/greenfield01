@@ -23,9 +23,9 @@ import { WishlistProvider } from './pages/wishlist/WishlistContext';
 import Wishlist from './pages/wishlist/Wishlist';
 import ProductCard from './components/ProductCard';
 import SearchResults from './components/SearchResults';
-
+import development from './config/default';
 // Stripe setup
-const stripePromise = loadStripe("pk_test_51QmDigCSIHj5BO0w8Yl64lZRRUxBmKJfhl7GZ73qwZLoDRvqH9dwG84ltpUindF0mWqcw0w6WT23ShLwzbn99Juw00mSIL3wZe");
+const stripePromise = loadStripe(development.STRIPE_PUBLIC_KEY);
 
 // Protected Route Component for Seller
 const SellerRoute = ({ children }) => {

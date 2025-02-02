@@ -3,6 +3,7 @@
   import { useNavigate } from "react-router-dom";
   import { useCart } from '../cart/CartContext';
   import axios from "axios";
+import development from "../../config/default";
 
   function CheckoutForm() {
     const {  cartItems, updateCart, orderId } = useCart();
@@ -32,7 +33,7 @@
       }
       if (!error){ console.log("Payment Method:", paymentMethod);
         try{
-          await axios.post("http://localhost:3000/api/payment/create-payment-intent",{orderId,  paymentMethod: paymentMethod.id})
+          await axios.post(development.VITE_PAYMMENT,{orderId,  paymentMethod: paymentMethod.id})
           updateCart(() => [])
           console.log("Cart :", cartItems)
         }catch(err){ console.log("Payment Method")
