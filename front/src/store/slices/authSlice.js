@@ -5,7 +5,7 @@ const initialState = {
   user: {
     role: localStorage.getItem('userRole'),
   },
-  userId: localStorage.getItem('userId'), // Retrieve userId from localStorage on initial load
+  userId: localStorage.getItem('userId'),
   isAuthenticated: false,
   loading: false,
   error: null,
@@ -25,8 +25,8 @@ const authSlice = createSlice({
       state.isAuthenticated = true;
       state.user = action.payload.user;
       state.token = action.payload.token;
-      state.userId = action.payload.user.id; // Store user.id in state
-      localStorage.setItem('userId', action.payload.user.id); // Store user.id in localStorage
+      state.userId = action.payload.user.id; 
+      localStorage.setItem('userId', action.payload.user.id);
       localStorage.setItem('userRole', action.payload.user.role);
       state.error = null;
     },
@@ -36,11 +36,11 @@ const authSlice = createSlice({
     },
     logout: (state) => {
       state.user = null;
-      state.userId = null; // Clear userId from state
+      state.userId = null; 
       state.token = null;
       state.isAuthenticated = false;
       localStorage.removeItem('token');
-      localStorage.removeItem('userId'); // Remove userId from localStorage
+      localStorage.removeItem('userId'); 
       localStorage.removeItem('userRole');
     },
     registerStart: (state) => {

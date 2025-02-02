@@ -1,16 +1,31 @@
-// src/functions/addToCart.js
-export const addToCart = (product, quantity, updateCart) => {
-  updateCart((prevCart) => {
-    const existingItemIndex = prevCart.findIndex(item => item.name === product.name);
+import { makeRequest, apis } from '../../stockApi/apistock';
 
-    if (existingItemIndex !== -1) {
-      // Item exists, update the quantity
-      const updatedCart = [...prevCart];
-      updatedCart[existingItemIndex].quantity += quantity; // Add the selected quantity
-      return updatedCart;
-    } else {
-      // Item doesn't exist, add a new one with the selected quantity
-      return [...prevCart, { ...product, quantity }];
+export const addToCart = async (productId, quantity = 1, userId) => {
+  try {
+    if (!userId) {
+      throw new Error("Please log in to add items to cart");
     }
-  });
+
+    const response = await makeRequest(apis.cart.addItem, {
+      productId,
+      quantity,
+      userId
+    });
+
+    if (response?.data?.success) {
+      return {
+        success: true,
+        message: "Product added to cart successfully"
+      };
+    } else {
+      throw new Error("Failed to add product to cart");
+    }
+
+  } catch (error) {
+    console.error("Error adding to cart:", error);
+    return {
+      success: false,
+      message: error.message || "Failed to add product to cart"
+    };
+  }
 };

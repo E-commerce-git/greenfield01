@@ -16,7 +16,7 @@ import NotFound from './pages/NotFound';
 import Payment from './pages/payment/payment';
 import Cart from './pages/cart/cart';
 import ContactUs from './pages/ContactUS';
-// import ProductDetails from './pages/Product_Details';
+
 import SellerDashboard from './pages/SellerDashboard';
 import { useSelector } from 'react-redux';
 import { WishlistProvider } from './pages/wishlist/WishlistContext';
@@ -27,7 +27,7 @@ import development from './config/default';
 // Stripe setup
 const stripePromise = loadStripe(development.STRIPE_PUBLIC_KEY);
 
-// Protected Route Component for Seller
+
 const SellerRoute = ({ children }) => {
   const { token, user } = useSelector((state) => state.auth);
   
@@ -57,14 +57,14 @@ function App() {
                 <Route path="/category/:categoryId" element={<ProductList />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/wishlist" element={<Wishlist />} />
-                {/* <Route path="/product/:id" element={<ProductDetails />} /> */}
+              
                 <Route path="/search/:query" element={<SearchResults />} />
                 <Route path="*" element={< ProductCard/>} />
                 <Route path="/" element={<  WishlistProvider/>} />
 
                 
                 
-                {/* Payment route with Stripe */}
+            
                 <Route 
                   path="/Payment" 
                   element={
@@ -74,13 +74,13 @@ function App() {
                   } 
                 />
                 
-                {/* Product details route */}
+              
                 <Route 
                   path="/product/:id" 
                   element={<ProductList showDetails={true} />} 
                 />
                 
-                {/* Seller Dashboard route with protection */}
+              
                 <Route 
                   path="/SellerDashboard" 
                   element={

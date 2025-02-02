@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import apis, { makeRequest } from '../../stockApi/apistock';
 
 const Profile = () => {
   const { user, isAuthenticated, logout } = useAuth();
@@ -15,10 +15,14 @@ const Profile = () => {
   });
 
   useEffect(() => {
-    console.log('Current user:', user);
-    console.log('Is authenticated:', isAuthenticated);
-    console.log('User role:', user?.role);
-  }, [user, isAuthenticated]);
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        name: user.userName || '',
+        email: user.email || ''
+      }));
+    }
+  }, [user]);
 
   const handleRedirectToLogin = () => {
     navigate('/login');
@@ -27,6 +31,47 @@ const Profile = () => {
   const handleSignOut = () => {
     logout();
     navigate('/login');
+  };
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    try {
+      const updateData = {
+        userName: formData.name,
+        email: formData.email,
+      };
+
+      if (formData.currentPassword) {
+        if (formData.newPassword !== formData.confirmPassword) {
+          alert('New passwords do not match');
+          return;
+        }
+        updateData.currentPassword = formData.currentPassword;
+        updateData.newPassword = formData.newPassword;
+      }
+
+      const response = await makeRequest(apis.user.update, updateData);
+
+      setFormData({
+        ...formData,
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: '',
+      });
+      alert('Profile updated successfully!');
+      
+    } catch (error) {
+      console.error('Profile update error:', error);
+      alert(error.response?.data?.message || 'Failed to update profile');
+    }
   };
 
   // If not authenticated, show login message
@@ -46,64 +91,8 @@ const Profile = () => {
     );
   }
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    try {
-      // Create update object with only filled fields
-      const updateData = {
-        userName: formData.name,
-        email: formData.email,
-      };
-
-      // Only include password fields if current password is provided
-      if (formData.currentPassword) {
-        if (formData.newPassword !== formData.confirmPassword) {
-          alert('New passwords do not match');
-          return;
-        }
-        updateData.currentPassword = formData.currentPassword;
-        updateData.newPassword = formData.newPassword;
-      }
-
-      const response = await axios.put(
-        'http://localhost:3000/api/user/current', 
-        updateData,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        }
-      );
-
-      setUser(response.data);
-      setFormData({
-        ...formData,
-        currentPassword: '',
-        newPassword: '',
-        confirmPassword: '',
-      });
-      alert('Profile updated successfully!');
-      
-    } catch (error) {
-      console.error(error);
-      alert(error.response?.data?.message || 'Failed to update user data');
-    }
-  };
-
   const SellerSection = () => {
-    console.log('Rendering SellerSection, user role:', user?.role);
-    
     if (user?.role !== 'seller') {
-      console.log('Not a seller, returning null');
       return null;
     }
     
@@ -272,7 +261,7 @@ const Profile = () => {
         </form>
       </div>
 
-      <SellerSection />
+      {user?.role === 'seller' && <SellerSection />}
     </div>
   );
 };

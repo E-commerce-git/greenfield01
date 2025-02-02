@@ -1,40 +1,46 @@
 import React, { useState, useEffect } from 'react';
+import img1 from "../assets/femme 2.png"
+import img2 from "../assets/fille 2.png"
+import img3 from "../assets/homme 2.png"
+import img4 from "../assets/homme_2.png"
+import img5 from "../assets/filles.png"
 
 export default function Carousel() {
-  // Image Array
+
   const images = [
-    'https://fastarz.com/wp-content/uploads/2023/09/Turkish-Zara.jpg',
-    'https://cdn.mos.cms.futurecdn.net/pY7Q5zV9vb6QovWr9WdaDj-1200-80.jpg',
-    'https://www.lecturas.com/medio/2022/09/07/zara_4860e6e2_1200x1449.jpg',
-  ];
+    img1,
+    img2,
+    img3,
+    img4,
+    img5
+  ]
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Function to move to the next slide
+
   const nextSlide = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
   };
 
-  // Function to move to the previous slide
+ 
   const prevSlide = () => {
     setCurrentIndex((prevIndex) =>
       prevIndex === 0 ? images.length - 1 : prevIndex - 1
     );
   };
 
-  // Set up auto-slide every 3 seconds
   useEffect(() => {
     const interval = setInterval(() => {
-      nextSlide(); // Move to the next slide every 3 seconds
-    }, 3000); // 3000 milliseconds = 3 seconds
+      nextSlide(); 
+    }, 1000); 
 
-    // Clean up interval when the component unmounts
+
     return () => clearInterval(interval);
-  }, []); // Empty dependency array to run only once when the component mounts
+  }, []);
 
   return (
     <div className="relative max-w-full mx-auto overflow-hidden">
-      {/* Carousel Images */}
+     
       <div className="w-full transition-transform duration-500 ease-in-out">
         <img
           src={images[currentIndex]}
@@ -43,7 +49,7 @@ export default function Carousel() {
         />
       </div>
 
-      {/* Navigation Arrows */}
+   
       <button
         onClick={prevSlide}
         className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-black text-white p-3 rounded-full opacity-70 hover:opacity-100 transition-opacity duration-200"
@@ -57,7 +63,7 @@ export default function Carousel() {
         &#8594;
       </button>
 
-      {/* Dots Navigation */}
+ 
       <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
         {images.map((_, index) => (
           <button

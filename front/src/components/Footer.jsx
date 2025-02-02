@@ -5,14 +5,14 @@ export default function Footer() {
     <footer className="bg-gray-900 text-white py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
-          {/* About Section */}
+        
           <div>
             <h3 className="text-lg font-bold mb-4">Exclusive</h3>
             <p className="text-sm text-gray-400">Subscribe Get 10%</p>
             <p className="text-sm text-gray-400">off your first order</p>
           </div>
 
-          {/* Quick Links */}
+      
           <div>
             <h3 className="text-lg font-bold mb-4">Quick Links</h3>
             <ul className="text-sm text-gray-400 space-y-2">
@@ -39,7 +39,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Contact Info */}
+         
           <div>
             <h3 className="text-lg font-bold mb-4">Contact Info</h3>
             <ul className="text-sm text-gray-400 space-y-2">
@@ -50,20 +50,20 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Download App Section */}
+        
           <div>
             <h3 className="text-lg font-bold mb-4">Download App</h3>
             <p className="text-sm text-gray-400 mb-4">
               Save $3 with App New User Only
             </p>
             <div className="flex items-center space-x-4 mb-6">
-              {/* QR Code */}
+           
               <img
                 src="https://tse2.mm.bing.net/th?id=OIP.-9N4K3Syg-OgbET8dgDwqAHaHa&pid=Api&P=0&h=180"
                 alt="QR Code"
                 className="w-24 h-24"
               />
-              {/* App Store Buttons */}
+             
               <div className="space-y-2">
                 <img
                   src="https://tse3.mm.bing.net/th?id=OIP.a7hkwxpVOiMzChf87GmGdwHaCM&pid=Api&P=0&h=180"
@@ -77,7 +77,7 @@ export default function Footer() {
                 />
               </div>
             </div>
-            {/* Social Media Icons */}
+          
             <div className="flex justify-center mt-4 space-x-6">
               <a
                 href="#"
