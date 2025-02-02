@@ -4,8 +4,11 @@ import { useState, useEffect, useMemo, useCallback } from "react"
 import { Heart, Minus, Plus, Eye } from "lucide-react"
 import { useDispatch, useSelector } from 'react-redux'
 import { addToWishlist, removeFromWishlist } from '../redux/wishlistSlice'
-import { useCart } from '../pages/cart/CartContext' // Import useCart
-import { addToCart } from '../functions/addToCard.jsx' // Import addToCart
+import { useParams } from 'react-router-dom'
+import { useCart } from '../pages/cart/CartContext'
+import { addToCart } from '../functions/addToCard.jsx'
+import ReviewForm from '../components/ReviewForm'
+import axios from 'axios'
 
 export default function ProductDetail({ product, productList }) {
   const [selectedImage, setSelectedImage] = useState(0)
@@ -15,15 +18,46 @@ export default function ProductDetail({ product, productList }) {
   const [failedImages, setFailedImages] = useState(new Set())
   const [userRating, setUserRating] = useState(0)
   const [isHovering, setIsHovering] = useState(0)
-
+  const [reviews, setReviews] = useState([])
+  const { id } = useParams()
+  
   const dispatch = useDispatch()
   const wishlist = useSelector((state) => state.wishlist.items)
-  const { updateCart } = useCart() // Get updateCart from useCart
+  const { updateCart } = useCart()
 
-  const handleRatingClick = (rating) => {
-    setUserRating(rating)
-    console.log(`Rating submitted: ${rating}`)
-  }
+  const handleRatingClick = async (rating) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Please login to rate products');
+        return;
+      }
+      
+      const response = await axios.post(
+        `http://localhost:3000/api/reviews/add`, 
+        { productId: id, rating, comment: '' },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+      
+      if (response.status === 201) {
+        setUserRating(rating);
+        // Update the product's rating in the UI
+        product.rating = ((product.rating * product.reviews) + rating) / (product.reviews + 1);
+        product.reviews += 1;
+      }
+    } catch (error) {
+      console.error('Error submitting rating:', error);
+      if (error.response) {
+        alert(error.response.data.message || 'Failed to submit rating');
+      } else {
+        alert('Network error. Please try again.');
+      }
+    }
+  };
 
   const isInWishlist = useMemo(() => {
     return wishlist.some((item) => item.id === product?.id)
@@ -59,7 +93,6 @@ export default function ProductDetail({ product, productList }) {
     })
   }, [])
 
-  // Handle Add to Cart
   const handleAddToCart = () => {
     const productWithDetails = {
       ...product,
@@ -69,6 +102,44 @@ export default function ProductDetail({ product, productList }) {
     };
     addToCart(productWithDetails, quantity, updateCart);
     alert(`${quantity} ${product.name}(s) added to cart!`);
+  };
+
+  const fetchReviews = async () => {
+    try {
+      const response = await axios.get(`http://localhost:3000/api/reviews/product/${id}`);
+      if (response.status === 200) {
+        setReviews(response.data);
+      }
+    } catch (error) {
+      console.error('Error fetching reviews:', error);
+      if (error.response) {
+        alert(error.response.data.message || 'Failed to fetch reviews');
+      } else {
+        alert('Network error. Please try again.');
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchReviews();
+  }, [id]);
+
+  const handleReviewSubmit = async (productId, rating, comment) => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.post(
+        `http://localhost:3000/api/reviews/add`, 
+        { productId, rating, comment },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+      fetchReviews(); // Refresh reviews after submission
+    } catch (error) {
+      console.error('Error submitting review:', error);
+    }
   };
 
   return (
@@ -165,7 +236,7 @@ export default function ProductDetail({ product, productList }) {
               </button>
             </div>
             <button 
-              onClick={handleAddToCart} // Updated to call handleAddToCart
+              onClick={handleAddToCart}
               className="px-8 py-2 bg-[#db4444] text-white rounded hover:bg-[#db4444]/90 transition-colors"
             >
               Add to Cart
@@ -243,6 +314,35 @@ export default function ProductDetail({ product, productList }) {
                   <span className="text-gray-500 text-sm">({product.reviews})</span>
                 </div>
               </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Reviews section */}
+      <div className="mt-16">
+        <h2 className="text-2xl font-bold mb-4">Customer Reviews</h2>
+        <ReviewForm productId={id} onSubmit={handleReviewSubmit} />
+        
+        <div className="mt-6">
+          {reviews.map((review) => (
+            <div key={review.id} className="border-b py-4">
+              <div className="flex items-center mb-2">
+                <div className="flex">
+                  {[...Array(5)].map((_, index) => (
+                    <span
+                      key={index}
+                      className={`text-yellow-400 ${index < review.rating ? 'fill-current' : 'text-gray-300'}`}
+                    >
+                      ★
+                    </span>
+                  ))}
+                </div>
+                <span className="ml-2 text-sm text-gray-500">
+                  by {review.User?.userName || 'Anonymous'}
+                </span>
+              </div>
+              <p className="text-gray-700">{review.comment}</p>
             </div>
           ))}
         </div>
