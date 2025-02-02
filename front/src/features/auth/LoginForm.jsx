@@ -43,7 +43,8 @@ const LoginForm = () => {
       
       // Navigate based on role
       if (user.role === 'seller') {
-        navigate('/seller/dashboard');
+        navigate('/');
+        location.reload();
       } else {
         navigate('/'); // or wherever you want users to go
       }

@@ -14,11 +14,7 @@ export default function About() {
           <div className="flex-1">
             <h1 className="text-4xl font-bold text-gray-800 mb-4">Our Story</h1>
             <p className="text-lg text-gray-600 mb-8">
-              Launched in 2025, GlobBuy is South Asia’s premier online shopping
-              mall with an active presense in Bangladesh. Supported by a wide
-              range of tailored marketing, data and service solutions, GlobBuy
-              has 10,500 sallers and 300 brands and serves 3 million customers
-              across the region.
+            Born from the vision of four Tunisian friends in 2025, GlobBuy is a dynamic e-commerce platform designed to connect buyers and sellers across the world. With a focus on innovation, community, and seamless shopping experiences, we’re here to empower businesses and delight customers. Join us as we build a brighter future for online commerce.
             </p>
           </div>
           <img
