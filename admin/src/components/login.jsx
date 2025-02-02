@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loginSuccess } from "../store/redux/authSlice";
 import { useNavigate } from "react-router-dom";
-
+import apis from "../../config/api";
+import axios from "axios";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -11,6 +12,7 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -22,17 +24,16 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     setError("");
-
+  
     try {
-      const response = await fetch("http://localhost:3000/api/user/loginadmin", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+      const response = await axios.post(apis.Authentication.login, {
+        email,
+        password,
       });
-
-      const data = await response.json();
-
-      if (response.ok) {
+  
+      const { data } = response;  
+  
+      if (response.status === 200) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
         dispatch(loginSuccess({ token: data.token, user: data.user }));
@@ -41,7 +42,8 @@ const Login = () => {
         setError(data.message || "Login failed");
       }
     } catch (error) {
-      setError("An error occurred. Please try again.");
+
+      setError(error.response?.data?.message || "An error occurred. Please try again.");
     } finally {
       setLoading(false);
     }

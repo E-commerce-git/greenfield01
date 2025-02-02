@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../store/redux/useAuth";
+import apis from "../../config/api";
+import axios from "axios";
 
 const UserList = () => {
   const [users, setUsers] = useState([]);
@@ -21,18 +23,13 @@ const UserList = () => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:3000/api/user/", {
+  
+      const response = await axios.get(apis.apisUser.fetchUsers, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-
-      if (response.ok) {
-        const data = await response.json();
-        setUsers(data);
-      } else {
-        setError("Failed to fetch users");
-      }
+      setUsers(response.data);
     } catch (error) {
       setError("Error fetching users");
     } finally {
@@ -47,25 +44,19 @@ const UserList = () => {
 
   const handleDelete = async () => {
     if (!selectedUser) return;
-
+  
     try {
-      const response = await fetch(`http://localhost:3000/api/user/${selectedUser.id}`, {
-        method: "DELETE",
+      await axios.delete(`${apis.apisUser.fetchUsers}${selectedUser.id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-
-      if (response.ok) {
-        setUsers(users.filter(u => u.id !== selectedUser.id));
-        setIsDeleteModalOpen(false);
-        setSelectedUser(null);
-      } else {
-        const data = await response.json();
-        setError(data.message || "Failed to delete user");
-      }
+  
+      setUsers(users.filter((u) => u.id !== selectedUser.id));
+      setIsDeleteModalOpen(false);
+      setSelectedUser(null);
     } catch (error) {
-      setError("Error deleting user");
+      setError(error.response?.data?.message || "Error deleting user");
     }
   };
 

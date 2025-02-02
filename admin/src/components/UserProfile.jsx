@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../store/redux/useAuth";
-
+import apis from "../../config/api";
+import axios from "axios";
 const UserProfile = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -27,22 +28,19 @@ const UserProfile = () => {
     try {
       setLoading(true);
       setError("");
-      
-      const response = await fetch(`http://localhost:3000/api/user/user/${id}`, {
+  
+      const token = localStorage.getItem("token");
+  
+      const { data } = await axios.get(`${apis.apisUser.fetchUserById}${id}`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${token}`,
         },
       });
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch user details");
-      }
-
-      const data = await response.json();
+  
       if (!data) {
         throw new Error("User not found");
       }
-
+  
       setUser(data);
       setFormData({
         userName: data.userName,
@@ -51,7 +49,7 @@ const UserProfile = () => {
       });
     } catch (error) {
       console.error("Error fetching user:", error);
-      setError(error.message || "Error fetching user details");
+      setError(error.response?.data?.message || error.message || "Error fetching user details");
     } finally {
       setLoading(false);
     }
@@ -69,35 +67,32 @@ const UserProfile = () => {
     e.preventDefault();
     try {
       setError("");
-      const response = await fetch(`http://localhost:3000/api/user/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({
+      
+      const { data } = await axios.put(
+        `${apis.apisUser.fetchUsers}${id}`,
+        {
           userName: formData.userName,
           email: formData.email,
-          role: formData.role
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to update user");
-      }
-
-      const { updatedUser } = await response.json();
-      setUser(updatedUser);
+          role: formData.role,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+  
+      setUser(data.updatedUser);
       setFormData({
-        userName: updatedUser.userName,
-        email: updatedUser.email,
-        role: updatedUser.role,
+        userName: data.updatedUser.userName,
+        email: data.updatedUser.email,
+        role: data.updatedUser.role,
       });
       setIsEditing(false);
     } catch (error) {
       console.error("Error updating user:", error);
-      setError(error.message || "Error updating user");
+      setError(error.response?.data?.message || "Error updating user");
     }
   };
 

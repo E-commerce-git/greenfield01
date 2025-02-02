@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../store/redux/authSlice";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useAuth } from "../store/redux/useAuth";
+import axios from "axios"
+import apis from "../../config/api";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -29,37 +31,37 @@ const Dashboard = () => {
     try {
       setLoading(true);
       setError("");
-
+  
       // Fetch users
-      const usersResponse = await fetch("http://localhost:3000/api/user/", {
+      const usersResponse = await axios.get(apis.apisUser.fetchUsers, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      const usersData = await usersResponse.json();
-
+      const usersData = usersResponse.data;
+  
       // Count users by role
       const userCounts = usersData.reduce((acc, user) => {
         acc[user.role] = (acc[user.role] || 0) + 1;
         return acc;
       }, {});
-
+  
       // Fetch products
-      const productsResponse = await fetch("http://localhost:3000/api/product/products", {
+      const productsResponse = await axios.get(apis.productsApi.getAllProducts, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      const productsData = await productsResponse.json();
-
+      const productsData = productsResponse.data;
+  
       // Fetch categories
-      const categoriesResponse = await fetch("http://localhost:3000/api/category/categories", {
+      const categoriesResponse = await axios.get(apis.apisCategory.getAll, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      const categoriesData = await categoriesResponse.json();
-
+      const categoriesData = categoriesResponse.data;
+  
       setStats({
         admins: userCounts.admin || 0,
         users: userCounts.user || 0,
